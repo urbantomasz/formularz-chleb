@@ -56,14 +56,16 @@
             <div id="breadChoices" class="mt-5 space-y-3"></div>
     
             <button type="button" id="addButton" onclick="addBreadChoice()" 
-                    class="w-full bg-green-500 text-white py-2 rounded-md mt-4 hover:bg-green-600">
+                    class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
                     🍞 Dodaj kolejny chleb
             </button>
             
-            <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
-                    class="w-full bg-gray-400 text-white py-2 rounded-md mt-3 disabled:opacity-50">
-                    ✅ Złóż zamówienie
-            </button>
+          <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
+        class="w-full py-2 rounded-md mt-3 text-white font-bold
+               bg-gray-400 cursor-not-allowed transition
+               enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
+               ✅ Złóż zamówienie
+</button>
         </form>
     </div>
     
