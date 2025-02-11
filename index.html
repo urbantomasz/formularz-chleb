@@ -265,8 +265,11 @@ function showConfirmationModal() {
     orderSummary += breadListHTML || "<p>Nie wybrano chlebów.</p>";
 
     document.getElementById("modalSummary").innerHTML = orderSummary;
-    document.getElementById("confirmationModal").classList.remove("hidden");
+    
+    const modal = document.getElementById("confirmationModal");
+    modal.classList.remove("hidden"); // Usunięcie klasy ukrywającej modal
 }
+
 function confirmOrder() {
     let name = document.getElementById("name").value;
     let phone = document.getElementById("phone").value;
@@ -305,7 +308,8 @@ function confirmOrder() {
 }
 
 function closeModal() {
-    document.getElementById("confirmationModal").style.display = "none";
+    const modal = document.getElementById("confirmationModal");
+    modal.classList.add("hidden"); // Ponowne ukrycie modala
 }
 
 document.addEventListener("DOMContentLoaded", function () {
