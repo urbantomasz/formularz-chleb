@@ -3,82 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <script src="https://cdn.tailwindcss.com"></script>
-<title>Marek Kulawik - Moje Pszczoły</title>
+<title>Moje Pszczoły - Marek Kulawik</title>
 </head>
 <body class="bg-gray-100">
+<!-- Nagłówek -->
+<div class="flex flex-col md:flex-row items-center justify-between bg-white p-6 max-w-5xl mx-auto rounded-lg shadow-md mt-5 w-full">
+  <img src="logo.JPG" class="w-24 h-24 md:w-28 md:h-28" alt="Logo Marka Kulawika">
+  <div class="text-center md:text-right">
+      <h1 class="text-2xl md:text-3xl font-bold">Moje Pszczoły</h1>
+      <h2 class="text-xl md:text-2xl text-gray-600">Marek Kulawik</h2>
+  </div>
+  <div class="flex space-x-3 mt-3 md:mt-0">
+      <img src="bread0.jpeg" class="w-20 h-20 md:w-24 md:h-24 rounded-md" alt="Chleb 1">
+      <img src="bread1.jpeg" class="w-20 h-20 md:w-24 md:h-24 rounded-md" alt="Chleb 2">
+      <img src="bread2.jpeg" class="w-20 h-20 md:w-24 md:h-24 rounded-md" alt="Chleb 3">
+  </div>
+</div>
 
-  <!-- Nagłówek -->
-  <div class="flex items-center justify-between bg-white p-5 max-w-3xl mx-auto rounded-lg shadow-md mt-5">
-      <img src="logo.JPG" class="w-20 h-20" alt="Logo Marka Kulawika">
-      <div class="text-right">
-          <h1 class="text-xl font-bold">Moje Pszczoły</h1>
-          <h2 class="text-lg">Marek Kulawik</h2>
-      </div>
-      <div class="flex space-x-3">
-          <img src="bread0.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 1">
-          <img src="bread1.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 2">
-          <img src="bread2.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 3">
-      </div>
-  </div>
-  
-  <!-- Formularz -->
-  <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
-      <form id="orderForm">
-          <label for="name" class="block font-bold">Imię i Nazwisko:</label>
-          <input type="text" id="name" name="name" required 
-                 class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
-                 oninput="checkFormValidity()">
-  
-          <label for="phone" class="block font-bold mt-3">Telefon:</label>
-          <input type="tel" id="phone" name="phone" required 
-                 class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
-                 oninput="checkFormValidity()">
-  
-          <label class="block font-bold mt-3">Wybierz dzień dostawy:</label>
-          <div id="dateOptions" class="mt-2 space-y-2">
-              <div class="flex items-center">
-                  <input type="radio" id="tuesday" name="orderDate" required onchange="checkFormValidity()">
-                  <label for="tuesday" class="ml-2 text-lg"></label>
-              </div>
-              <div class="flex items-center">
-                  <input type="radio" id="wednesday" name="orderDate" onchange="checkFormValidity()">
-                  <label for="wednesday" class="ml-2 text-lg"></label>
-              </div>
-              <div class="flex items-center">
-                  <input type="radio" id="thursday" name="orderDate" onchange="checkFormValidity()">
-                  <label for="thursday" class="ml-2 text-lg"></label>
-              </div>
+<!-- Formularz -->
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-6 w-full">
+  <form id="orderForm">
+      <label for="name" class="block font-bold text-lg">Imię i Nazwisko:</label>
+      <input type="text" id="name" name="name" required 
+             class="w-full border rounded-md p-3 mt-2 text-lg focus:ring focus:ring-green-300"
+             oninput="checkFormValidity()">
+
+      <label for="phone" class="block font-bold text-lg mt-4">Telefon:</label>
+      <input type="tel" id="phone" name="phone" required 
+             class="w-full border rounded-md p-3 mt-2 text-lg focus:ring focus:ring-green-300"
+             oninput="checkFormValidity()">
+
+      <label class="block font-bold text-lg mt-4">Wybierz dzień dostawy:</label>
+      <div id="dateOptions" class="mt-3 space-y-3">
+          <div class="flex items-center">
+              <input type="radio" id="tuesday" name="orderDate" required onchange="checkFormValidity()">
+              <label for="tuesday" class="ml-3 text-lg"></label>
           </div>
-  
-          <div id="breadChoices" class="mt-5 space-y-3"></div>
-  
-          <button type="button" id="addButton" onclick="addBreadChoice()" 
-                  class="w-full bg-green-500 text-white py-2 rounded-md mt-4 hover:bg-green-600">
-              Dodaj kolejny chleb
-          </button>
-          
-          <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
-                  class="w-full bg-gray-400 text-white py-2 rounded-md mt-3 disabled:opacity-50">
-              Złóż zamówienie
-          </button>
-      </form>
-  </div>
-  
-  <!-- Modal potwierdzenia -->
-  <div id="confirmationModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-          <h2 class="text-xl font-bold">Potwierdzenie zamówienia</h2>
-          <p id="modalSummary" class="mt-3 text-gray-700"></p>
-          <div class="mt-5 flex justify-center space-x-3">
-              <button onclick="confirmOrder()" class="bg-green-500 text-white px-5 py-2 rounded-md hover:bg-green-600">
-                  Potwierdź
-              </button>
-              <button onclick="closeModal()" class="bg-red-500 text-white px-5 py-2 rounded-md hover:bg-red-600">
-                  Anuluj
-              </button>
+          <div class="flex items-center">
+              <input type="radio" id="wednesday" name="orderDate" onchange="checkFormValidity()">
+              <label for="wednesday" class="ml-3 text-lg"></label>
+          </div>
+          <div class="flex items-center">
+              <input type="radio" id="thursday" name="orderDate" onchange="checkFormValidity()">
+              <label for="thursday" class="ml-3 text-lg"></label>
           </div>
       </div>
+
+      <div id="breadChoices" class="mt-6 space-y-4"></div>
+
+      <button type="button" id="addButton" onclick="addBreadChoice()" 
+              class="w-full bg-green-500 text-white py-3 text-lg rounded-md mt-5 hover:bg-green-600">
+          ➕ Dodaj kolejny chleb
+      </button>
+      
+      <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
+              class="w-full bg-gray-400 text-white py-3 text-lg rounded-md mt-4 disabled:opacity-50">
+          ✅ Złóż zamówienie
+      </button>
+  </form>
+</div>
+
+<!-- Modal potwierdzenia -->
+<div id="confirmationModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg text-center max-w-xl w-full">
+      <h2 class="text-2xl font-bold">Potwierdzenie zamówienia</h2>
+      <p id="modalSummary" class="mt-4 text-gray-700 text-lg"></p>
+      <div class="mt-6 flex justify-center space-x-4">
+          <button onclick="confirmOrder()" class="bg-green-500 text-white px-6 py-3 text-lg rounded-md hover:bg-green-600">
+              ✅ Potwierdź
+          </button>
+          <button onclick="closeModal()" class="bg-red-500 text-white px-6 py-3 text-lg rounded-md hover:bg-red-600">
+              ❌ Anuluj
+          </button>
+      </div>
   </div>
+</div>
+
   
 
 
