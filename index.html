@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<title>Marek Kulawik - Moje Pszczoły</title>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Nagłówek -->
+  <div class="flex items-center justify-between bg-white p-5 max-w-3xl mx-auto rounded-lg shadow-md mt-5">
+      <img src="logo.JPG" class="w-20 h-20" alt="Logo Marka Kulawika">
+      <div class="text-right">
+          <h1 class="text-xl font-bold">Moje Pszczoły</h1>
+          <h2 class="text-lg">Marek Kulawik</h2>
+      </div>
+      <div class="flex space-x-3">
+          <img src="bread0.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 1">
+          <img src="bread1.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 2">
+          <img src="bread2.jpeg" class="w-16 h-16 rounded-md" alt="Chleb 3">
+      </div>
+  </div>
+  
+  <!-- Formularz -->
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+      <form id="orderForm">
+          <label for="name" class="block font-bold">Imię i Nazwisko:</label>
+          <input type="text" id="name" name="name" required 
+                 class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
+                 oninput="checkFormValidity()">
+  
+          <label for="phone" class="block font-bold mt-3">Telefon:</label>
+          <input type="tel" id="phone" name="phone" required 
+                 class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
+                 oninput="checkFormValidity()">
+  
+          <label class="block font-bold mt-3">Wybierz dzień dostawy:</label>
+          <div id="dateOptions" class="mt-2 space-y-2">
+              <div class="flex items-center">
+                  <input type="radio" id="tuesday" name="orderDate" required onchange="checkFormValidity()">
+                  <label for="tuesday" class="ml-2 text-lg"></label>
+              </div>
+              <div class="flex items-center">
+                  <input type="radio" id="wednesday" name="orderDate" onchange="checkFormValidity()">
+                  <label for="wednesday" class="ml-2 text-lg"></label>
+              </div>
+              <div class="flex items-center">
+                  <input type="radio" id="thursday" name="orderDate" onchange="checkFormValidity()">
+                  <label for="thursday" class="ml-2 text-lg"></label>
+              </div>
+          </div>
+  
+          <div id="breadChoices" class="mt-5 space-y-3"></div>
+  
+          <button type="button" id="addButton" onclick="addBreadChoice()" 
+                  class="w-full bg-green-500 text-white py-2 rounded-md mt-4 hover:bg-green-600">
+              Dodaj kolejny chleb
+          </button>
+          
+          <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
+                  class="w-full bg-gray-400 text-white py-2 rounded-md mt-3 disabled:opacity-50">
+              Złóż zamówienie
+          </button>
+      </form>
+  </div>
+  
+  <!-- Modal potwierdzenia -->
+  <div id="confirmationModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 class="text-xl font-bold">Potwierdzenie zamówienia</h2>
+          <p id="modalSummary" class="mt-3 text-gray-700"></p>
+          <div class="mt-5 flex justify-center space-x-3">
+              <button onclick="confirmOrder()" class="bg-green-500 text-white px-5 py-2 rounded-md hover:bg-green-600">
+                  Potwierdź
+              </button>
+              <button onclick="closeModal()" class="bg-red-500 text-white px-5 py-2 rounded-md hover:bg-red-600">
+                  Anuluj
+              </button>
+          </div>
+      </div>
+  </div>
+  
+
+
+<script>
+const breadTypes = [
+  "Chleb żytni bez dodatków (domowy)",
+  "Chleb żytni z otrębami i posypany złotym lnem",
+  "Chleb żytni ze słonecznikiem",
+  "Chleb żytni z kminkiem",
+  "Chleb żytni z czarnuszką",
+  "Chleb pszenno-żytni z czarnuszką i suszonymi pomidorami",
+  "Chleb pszenno-żytni z prażoną cebulką",
+  "Chleb pszenno-żytni ze słonecznikiem",
+  "Chleb pszenno-żytni",
+  "Chleb pszenno-żytni z pomidorami, bazylią i czosnkiem niedźwiedzim",
+  "Chleb orkiszowy",
+];
+
+let selectedBreads = [];
+
+function updateDropdowns() {
+  const allSelects = document.querySelectorAll('.breadChoice select');
+  selectedBreads = Array.from(allSelects).map(select => select.value).filter(value => value !== "");
+
+  allSelects.forEach(select => {
+    const selectedValue = select.value;
+    select.innerHTML = breadTypes
+      .map(bread => `<option value="${bread}" ${selectedBreads.includes(bread) && bread !== selectedValue ? 'disabled' : ''}>${bread}</option>`)
+      .join('');
+
+    select.value = selectedValue;
+  });
+
+  checkFormValidity();
+}
+
+function addBreadChoice() {
+    if (selectedBreads.length >= breadTypes.length) return;
+
+    const container = document.getElementById('breadChoices');
+    const newChoice = document.createElement('div');
+    newChoice.classList.add('breadChoice', 'flex', 'items-center', 'justify-between', 'gap-3', 'p-2', 'bg-gray-100', 'rounded-lg', 'shadow-sm');
+
+    // 📌 Znajdź pierwszy dostępny chleb, który nie został jeszcze wybrany
+    const remainingBreads = breadTypes.filter(bread => !selectedBreads.includes(bread));
+    if (remainingBreads.length === 0) return;
+
+    const firstAvailableBread = remainingBreads[0]; // Pierwszy dostępny chleb
+
+    const select = document.createElement('select');
+    select.classList.add('w-2/3', 'p-2', 'border', 'rounded-md', 'focus:ring', 'focus:ring-green-300');
+    
+    select.innerHTML = breadTypes
+        .map(bread => `<option value="${bread}" ${bread === firstAvailableBread ? 'selected' : ''}>${bread}</option>`)
+        .join('');
+
+    // Dodaj wybrany chleb do `selectedBreads`
+    selectedBreads.push(firstAvailableBread);
+
+    select.onchange = function () {
+        updateDropdowns();
+        checkFormValidity();
+    };
+
+    // 📌 Kontrola ilości chleba
+    const quantityControls = document.createElement('div');
+    quantityControls.classList.add('flex', 'items-center', 'gap-2');
+
+    const minusBtn = document.createElement('button');
+    minusBtn.textContent = "−";
+    minusBtn.classList.add('bg-red-500', 'text-white', 'px-3', 'py-1', 'rounded-md', 'hover:bg-red-600', 'disabled:opacity-50');
+    minusBtn.disabled = true;
+    minusBtn.onclick = function (event) {
+        event.preventDefault();
+        let value = parseInt(quantityDisplay.textContent);
+        if (value > 1) {
+            quantityDisplay.textContent = value - 1;
+            checkFormValidity();
+        }
+        minusBtn.disabled = value - 1 <= 1;
+        plusBtn.disabled = false;
+    };
+
+    const quantityDisplay = document.createElement('span');
+    quantityDisplay.textContent = "1";
+    quantityDisplay.classList.add('quantity-display', 'w-8', 'text-center', 'font-bold');
+
+    const plusBtn = document.createElement('button');
+    plusBtn.textContent = "+";
+    plusBtn.classList.add('bg-green-500', 'text-white', 'px-3', 'py-1', 'rounded-md', 'hover:bg-green-600', 'disabled:opacity-50');
+    plusBtn.onclick = function (event) {
+        event.preventDefault();
+        let value = parseInt(quantityDisplay.textContent);
+        if (value < 9) {
+            quantityDisplay.textContent = value + 1;
+            checkFormValidity();
+        }
+        plusBtn.disabled = value + 1 >= 9;
+        minusBtn.disabled = false;
+    };
+
+    quantityControls.appendChild(minusBtn);
+    quantityControls.appendChild(quantityDisplay);
+    quantityControls.appendChild(plusBtn);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Usuń';
+    removeBtn.classList.add('bg-red-500', 'text-white', 'px-3', 'py-1', 'rounded-md', 'hover:bg-red-600');
+    removeBtn.onclick = function (event) {
+        event.preventDefault();
+        newChoice.remove();
+        selectedBreads = selectedBreads.filter(bread => bread !== firstAvailableBread);
+        updateDropdowns();
+        checkFormValidity();
+    };
+
+    newChoice.appendChild(select);
+    newChoice.appendChild(quantityControls);
+    newChoice.appendChild(removeBtn);
+    container.appendChild(newChoice);
+
+    updateDropdowns();
+    checkFormValidity();
+}
+
+
+function checkFormValidity() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const selectedDate = document.querySelector('input[name="orderDate"]:checked');
+
+  // Pobranie wszystkich selectów w klasie .breadChoice
+  const breadChoices = document.querySelectorAll('.breadChoice select');
+  const hasBread = Array.from(breadChoices).some(select => select.value !== "");
+
+  console.log("===== Sprawdzanie formularza =====");
+  console.log("Imię i nazwisko:", name);
+  console.log("Telefon:", phone);
+  console.log("Wybrana data dostawy:", selectedDate ? selectedDate.value : "Brak");
+  console.log("Czy wybrano przynajmniej jeden chleb:", hasBread);
+  
+  const isValid = name && phone && selectedDate && hasBread;
+  console.log("Czy formularz jest poprawny:", isValid);
+  
+  document.getElementById("submitOrderButton").disabled = !isValid;
+}
+
+function showConfirmationModal() {
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let selectedDate = document.querySelector('input[name="orderDate"]:checked');
+
+    if (!selectedDate) {
+        alert("Wybierz dzień dostawy!");
+        return;
+    }
+
+    let dateText = document.querySelector(`label[for="${selectedDate.id}"]`).textContent;
+    
+    let orderSummary = `<strong>Zamawiający:</strong> ${name} <br>`;
+    orderSummary += `<strong>Telefon:</strong> ${phone} <br>`;
+    orderSummary += `<strong>Data dostawy:</strong> ${dateText} <br><br><strong>Zamówione chleby:</strong><br>`;
+
+    let breadListHTML = "";
+
+    document.querySelectorAll('.breadChoice').forEach(choice => {
+        let breadSelect = choice.querySelector('select');
+        let quantityDisplay = choice.querySelector('.quantity-display');
+
+        if (!breadSelect || !quantityDisplay) {
+            console.error("Błąd: Nie znaleziono selecta lub ilości chleba w jednej z kontrolek.");
+            return;
+        }
+
+        let breadName = breadSelect.selectedOptions[0].text;
+        let quantity = quantityDisplay.textContent;
+
+        breadListHTML += `<p>🍞 ${breadName} - <strong>${quantity} szt.</strong></p>`;
+    });
+
+    orderSummary += breadListHTML || "<p>Nie wybrano chlebów.</p>";
+
+    document.getElementById("modalSummary").innerHTML = orderSummary;
+    document.getElementById("confirmationModal").classList.remove("hidden");
+}
+function confirmOrder() {
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let selectedDate = document.querySelector('input[name="orderDate"]:checked');
+
+    if (!selectedDate) {
+        alert("Wybierz dzień dostawy!");
+        return;
+    }
+
+    let orderData = {
+        zamawiający: name,
+        telefon: phone,
+        data_dostawy: selectedDate.value,
+        chleby: []
+    };
+
+    document.querySelectorAll('.breadChoice').forEach(choice => {
+        let breadSelect = choice.querySelector('select');
+        let quantityDisplay = choice.querySelector('.quantity-display');
+
+        if (!breadSelect || !quantityDisplay) {
+            console.error("Błąd: Nie znaleziono selecta lub ilości chleba w jednej z kontrolek.");
+            return; // Pominięcie tego elementu, zamiast rzucenia błędu
+        }
+
+        let breadName = breadSelect.selectedOptions[0].text;
+        let quantity = quantityDisplay.textContent; // ✅ Teraz mamy pewność, że .quantity-display istnieje
+
+        orderData.chleby.push({ nazwa: breadName, ilość: quantity });
+    });
+
+    console.log("Potwierdzono zamówienie:", orderData);
+
+    closeModal();
+}
+
+function closeModal() {
+    document.getElementById("confirmationModal").style.display = "none";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    function getNextDay(day) {
+        let today = new Date();
+        let diff = (day + 7 - today.getDay()) % 7 || 7;
+        today.setDate(today.getDate() + diff);
+        return today.toISOString().split("T")[0];
+    }
+
+    const labels = document.querySelectorAll("#dateOptions label");
+    const radios = document.querySelectorAll("#dateOptions input");
+    const dates = [getNextDay(2), getNextDay(3), getNextDay(4)];
+
+    radios.forEach((radio, index) => {
+        radio.value = dates[index];
+        labels[index].innerText = `${["Wtorek", "Środa", "Czwartek"][index]} - ${dates[index]}`;
+    });
+});
+</script>
+</body>
+</html>
