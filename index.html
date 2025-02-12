@@ -322,12 +322,33 @@ function confirmOrder() {
 
     console.log("Potwierdzono zamówienie:", orderData);
 
+    // Wysyłamy dane do Google Sheets
+    sendOrderToGoogleSheets(orderData);
+
     closeModal();
 }
 
 function closeModal() {
     const modal = document.getElementById("confirmationModal");
     modal.classList.add("hidden"); // Ponowne ukrycie modala
+}
+
+function sendOrderToGoogleSheets(orderData) {
+    const googleSheetsURL = "https://script.google.com/macros/s/AKfycbzvP6720CtA-ZBjJIQt1O1XJiTHVw8jAYpDsmDDU6GMw4Q8AGMKFjYqFETIwl4WCtZBUg/exec"; // Wstaw tutaj swój URL z Google Apps Script
+
+    fetch(googleSheetsURL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+    }).then(response => {
+        console.log("Dane zostały wysłane do Google Sheets");
+        console.log(response)
+    }).catch(error => {
+        console.error("Błąd podczas wysyłania do Google Sheets:", error);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
