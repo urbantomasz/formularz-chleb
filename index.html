@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <title>Moje Pszczoły - Marek Kulawik</title>
 </head>
@@ -334,7 +335,7 @@ function closeModal() {
 }
 
 function sendOrderToGoogleSheets(orderData) {
-    const googleSheetsURL = "https://script.google.com/macros/s/AKfycbzvP6720CtA-ZBjJIQt1O1XJiTHVw8jAYpDsmDDU6GMw4Q8AGMKFjYqFETIwl4WCtZBUg/exec"; // Wstaw tutaj swój URL z Google Apps Script
+    const googleSheetsURL = "https://script.google.com/macros/s/AKfycbyD_A2HAVQEkUGH27yN_Um_8VuHmYjWdFnktauLcQE94zxZfEH_xjv88klE8Ycaygt9oQ/exec"; // Wstaw tutaj swój URL z Google Apps Script
 
     fetch(googleSheetsURL, {
         method: "POST",
