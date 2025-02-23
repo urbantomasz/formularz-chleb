@@ -25,20 +25,21 @@
         </div>
     </div>
     
-    <!-- Formularz -->
-    <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
-        <form id="orderForm">
-            <label for="name" class="block font-bold">Imię i Nazwisko:</label>
-            <input type="text" id="name" name="name" required 
-                   class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
-                   oninput="checkFormValidity()">
-    
-            <label for="phone" class="block font-bold mt-3">Telefon:</label>
-            <input type="tel" id="phone" name="phone" required 
-                   class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
-                   oninput="checkFormValidity()">
-    
-            <label class="block font-bold mt-3">Wybierz dzień dostawy:</label>
+ <!-- Formularz -->
+<div id="formContainer" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+    <form id="orderForm">
+        <label for="name" class="block font-bold">Imię i Nazwisko: <span class="text-red-500">*</span></label>
+        <input type="text" id="name" name="name" required 
+               class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
+               oninput="checkFormValidity()">
+
+        <label for="phone" class="block font-bold mt-3">Telefon: <span class="text-red-500">*</span></label>
+        <input type="tel" id="phone" name="phone" required 
+               class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300"
+               oninput="checkFormValidity()">
+
+        <label class="block font-bold mt-3">Wybierz dzień dostawy: <span class="text-red-500">*</span></label>
+        <div id="dateOptionsContainer" class="border p-3 rounded-md">
             <div id="dateOptions" class="mt-2 space-y-2">
                 <div class="flex items-center">
                     <input type="radio" id="tuesday" name="orderDate" required onchange="checkFormValidity()">
@@ -53,22 +54,30 @@
                     <label for="thursday" class="ml-2 text-lg"></label>
                 </div>
             </div>
-    
-            <div id="breadChoices" class="mt-5 space-y-3"></div>
-    
-            <button type="button" id="addButton" onclick="addBreadChoice()" 
-                    class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
-                    🍞 Dodaj kolejny chleb
-            </button>
-            
-          <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
-        class="w-full py-2 rounded-md mt-3 text-white font-bold
-               bg-gray-400 cursor-not-allowed transition
-               enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
+        </div>
+
+        <div id="breadChoices" class="mt-5 space-y-3"></div>
+
+        <button type="button" id="addButton" onclick="addBreadChoice()" 
+                class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
+                🍞 Dodaj kolejny chleb
+        </button>
+
+        <button type="button" id="submitOrderButton" onclick="showConfirmationModal()" disabled
+        class="w-full py-2 rounded-md mt-3 text-white font-bold transition
+               bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
                ✅ Złóż zamówienie
-</button>
-        </form>
-    </div>
+        </button>
+    </form>
+</div>
+
+
+    <!-- Komunikat o sukcesie -->
+<div id="successMessage" class="hidden max-w-xl mx-auto bg-green-100 p-6 rounded-lg shadow-md mt-5 text-center">
+    <h2 class="text-2xl font-bold text-green-600">✅ Zamówienie zostało pomyślnie złożone!</h2>
+    <p class="mt-3 text-gray-700">Dziękujemy za Twoje zamówienie.</p>
+</div>
+
     
     <!-- Modal potwierdzenia -->
     <div id="confirmationModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
@@ -223,24 +232,39 @@ function addBreadChoice() {
 
 
 function checkFormValidity() {
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const selectedDate = document.querySelector('input[name="orderDate"]:checked');
+    const name = document.getElementById("name");
+    const phone = document.getElementById("phone");
+    const selectedDate = document.querySelector('input[name="orderDate"]:checked');
+    const dateOptionsContainer = document.getElementById("dateOptionsContainer");
+    
+      // Pobranie wszystkich selectów w klasie .breadChoice
+    const breadChoices = document.querySelectorAll('.breadChoice select');
+    const hasBread = Array.from(breadChoices).some(select => select.value !== "");
+    const hasPhone = phone.value.trim();
+    const hasName = name.value.trim();
 
-  // Pobranie wszystkich selectów w klasie .breadChoice
-  const breadChoices = document.querySelectorAll('.breadChoice select');
-  const hasBread = Array.from(breadChoices).some(select => select.value !== "");
+    
+    // Oznaczamy puste pola na czerwono
+    [name, phone].forEach(input => {
+        if (!input.value.trim()) {
+            input.classList.add("border-red-500");
+        } else {
+            input.classList.remove("border-red-500");
+        }
+    });
 
-  console.log("===== Sprawdzanie formularza =====");
-  console.log("Imię i nazwisko:", name);
-  console.log("Telefon:", phone);
-  console.log("Wybrana data dostawy:", selectedDate ? selectedDate.value : "Brak");
-  console.log("Czy wybrano przynajmniej jeden chleb:", hasBread);
-  
-  const isValid = name && phone && selectedDate && hasBread;
-  console.log("Czy formularz jest poprawny:", isValid);
-  
-  document.getElementById("submitOrderButton").disabled = !isValid;
+        // Oznaczamy datę dostawy na czerwono, jeśli nie jest wybrana
+        if (!selectedDate) {
+        dateOptionsContainer.classList.add("border-red-500");
+    } else {
+        dateOptionsContainer.classList.remove("border-red-500");
+    }
+
+
+    const isValid = name && phone && selectedDate && hasBread;
+    console.log("Czy formularz jest poprawny:", isValid);
+
+    document.getElementById("submitOrderButton").disabled = !isValid;
 }
 
 function showConfirmationModal() {
@@ -335,20 +359,21 @@ function closeModal() {
 }
 
 function sendOrderToGoogleSheets(orderData) {
-    const googleSheetsURL = "https://script.google.com/macros/s/AKfycbyD_A2HAVQEkUGH27yN_Um_8VuHmYjWdFnktauLcQE94zxZfEH_xjv88klE8Ycaygt9oQ/exec"; // Wstaw tutaj swój URL z Google Apps Script
+    const googleSheetsURL = "https://script.google.com/macros/s/AKfycbyD_A2HAVQEkUGH27yN_Um_8VuHmYjWdFnktauLcQE94zxZfEH_xjv88klE8Ycaygt9oQ/exec";
 
     fetch(googleSheetsURL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData)
-    }).then(response => {
-        console.log("Dane zostały wysłane do Google Sheets");
-        console.log(response)
+    }).then(() => {
+        console.log("Dane wysłane do Google Sheets");
+
+        // Ukryj formularz i pokaż komunikat o sukcesie
+        document.getElementById("formContainer").classList.add("hidden");
+        document.getElementById("successMessage").classList.remove("hidden");
     }).catch(error => {
-        console.error("Błąd podczas wysyłania do Google Sheets:", error);
+        console.error("Błąd wysyłania:", error);
     });
 }
 
@@ -357,7 +382,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let today = new Date();
         let diff = (day + 7 - today.getDay()) % 7 || 7;
         today.setDate(today.getDate() + diff);
-        return today.toLocaleDateString();
+
+        return today.toLocaleDateString("pl-PL"); // 📌 Formatowanie PL: dd/mm/yyyy
     }
 
     const labels = document.querySelectorAll("#dateOptions label");
