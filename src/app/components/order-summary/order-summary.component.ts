@@ -52,11 +52,15 @@ export class OrderSummaryComponent implements OnInit {
     });
   }
 
+  modifyOrder(orderId: number){
+
+  }
+
   calculateBreadSummary() {
     this.breadSummary = {};
     this.orders.forEach(order => {
       order.breads.forEach(item => {
-        this.breadSummary[item.name] = (this.breadSummary[item.name] || 0) + item.quantity;
+        this.breadSummary[item.breadId] = (this.breadSummary[item.breadId] || 0) + item.quantity;
       });
     });
   }

@@ -1,56 +1,94 @@
 <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
-    <form (ngSubmit)="openConfirmationModal()">
-      <label class="block font-bold">Imię i Nazwisko:</label>
-      <input [(ngModel)]="order.customerName" name="customerName" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300" required>
+    <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
+    <form (ngSubmit)="openConfirmationModal()" class="p-4 space-y-4">
+      <!-- 🔹 Imię i Nazwisko -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Imię i Nazwisko</mat-label>
+        <input matInput [(ngModel)]="order.customerName" name="customerName" required>
+        <mat-error *ngIf="showValidationErrors && !order.customerName">To pole jest wymagane.</mat-error>
+      </mat-form-field>
   
-      <label class="block font-bold mt-3">Telefon:</label>
-      <input [(ngModel)]="order.phone" name="phone" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300" required>
+<!-- 🔹 Telefon -->
+<mat-form-field appearance="outline" class="w-full">
+    <mat-label>📞 Telefon:</mat-label>
+    <span matTextPrefix>+48 &nbsp;</span>
+    <input 
+      matInput 
+      [(ngModel)]="order.phone" 
+      name="phone"
+      placeholder="123456789"
+      minlength="9"
+      maxlength="9"
+      pattern="^[0-9]{9}$"
+      required
+      type="tel">
+    <mat-error *ngIf="showValidationErrors && (order.phone?.length || 0) < 9">
+      Numer telefonu musi mieć 9 cyfr.
+    </mat-error>
+  </mat-form-field>
   
-      <label class="block font-bold mt-3">Wybierz dzień dostawy:</label>
-      <select [(ngModel)]="order.orderDate" name="orderDate" class="w-full border rounded-md p-2 mt-1">
-        <option *ngFor="let date of availableDates" [value]="date">{{ date }}</option>
-      </select>
+      <!-- 🔹 Wybór daty dostawy -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>📅 Wybierz dzień dostawy</mat-label>
+        <mat-select [(ngModel)]="order.orderDate" name="orderDate">
+          <mat-option *ngFor="let date of availableDates" [value]="date">{{ date }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <label class="block font-bold mt-3">Uwagi:</label>
-      <input [(ngModel)]="order.note" name="note" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300">
+      <!-- 🔹 Uwagi -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Uwagi</mat-label>
+        <textarea matInput></textarea>
+      </mat-form-field>
   
-      <div class="mt-5 space-y-3">
-        <button type="button" (click)="addBreadChoice()" class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
-          🍞 Dodaj kolejny chleb
+        
+      <h3 *ngIf="order.breads.length > 0" class="font-bold">🥖 Zamawiane chleby:</h3>
+        <!-- 🔹 Chleby -->
+        <div *ngFor="let bread of order.breads; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
+    
+            <!-- Wybór chleba -->
+            <mat-form-field subscriptSizing="dynamic" appearance="outline" class="w-1/2">
+                <mat-label>Wybierz chleb</mat-label>
+                <mat-select appearance="outline" [(ngModel)]="bread.breadId" name="bread{{i}}" (selectionChange)="onBreadSelectionChange(i, $event.value)">
+                    <mat-option *ngFor="let b of availableBreads" [value]="b.breadId" [disabled]="b.disabled">
+                        {{ b.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <!-- Ilość chleba -->
+            <div class="flex items-center justify-center space-x-2">
+                <button mat-mini-fab color="warn" (click)="decreaseQuantity(i)" [disabled]="bread.quantity <= 1" class="flex items-center justify-center">
+                    ➖
+                </button>
+                <span class="text-lg font-bold w-6 text-center">{{ bread.quantity }}</span>
+                <button mat-mini-fab color="primary" (click)="increaseQuantity(i)" [disabled]="bread.quantity >= 10" class="flex items-center justify-center">
+                    ➕
+                </button>
+            </div>
+        
+            <!-- Usuń chleb -->
+            <button mat-button color="warn" (click)="removeBreadChoice(i)" class="flex items-center justify-center">
+                Usuń
+            </button>
+        
+        </div>
+        
+
+        <!-- 🔹 Powiększony Przycisk "Dodaj Chleb" -->
+        <button class="w-full !text-lg p-4 !h-14" mat-raised-button color="primary" type="button" (click)="addBreadChoice()">
+            🍞 Dodaj kolejny chleb
         </button>
-      </div>
-  
-      <button type="submit" class="w-full py-2 rounded-md mt-3 text-white font-bold bg-blue-500 hover:bg-blue-600">
-        ✅ Złóż zamówienie
-      </button>
+
+        <mat-error *ngIf="showValidationErrors && order.breads.length === 0">
+            Musisz dodać co najmniej jeden chleb
+        </mat-error>
+
+        <!-- 🔹 Powiększony Przycisk "Złóż Zamówienie" -->
+        <button class="w-full !text-lg p-4 !h-16" mat-raised-button color="accent" type="submit">
+            ✅ Złóż zamówienie
+        </button>
+        
     </form>
-  </div>
-  
-  <div *ngIf="showConfirmationModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl text-left">
-        <h2 class="text-2xl font-bold text-center">Potwierdzenie zamówienia</h2>
-  
-        <div class="mt-3 text-gray-700">
-            <p><strong>Zamawiający:</strong> {{ order.customerName }}</p>
-            <p><strong>Telefon:</strong> {{ order.phone }}</p>
-            <p><strong>Data dostawy:</strong> {{ order.orderDate }}</p>
-        </div>
-  
-        <h3 class="mt-4 font-semibold">Zamówione chleby:</h3>
-        <div class="mt-2 text-gray-700">
-          <div *ngFor="let item of order.breads">
-            <span>🍞 {{ item.name }} - <strong>{{ item.quantity }} szt.</strong></span>
-          </div>
-        </div>
-  
-        <div class="mt-5 flex justify-center space-x-3">
-            <button (click)="submitOrder()" class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 flex items-center gap-2">
-                ✅ Potwierdź
-            </button>
-            <button (click)="closeConfirmationModal()" class="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 flex items-center gap-2">
-                ❌ Anuluj
-            </button>
-        </div>
-    </div>
-  </div>
+</div>
   

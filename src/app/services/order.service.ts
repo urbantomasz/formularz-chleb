@@ -4,9 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface OrderItem {
+  breadId: number;
   name: string;
   quantity: number;
 }
+
+
 
 export interface Order {
   orderId?: number;
