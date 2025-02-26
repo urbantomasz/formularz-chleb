@@ -1,0 +1,56 @@
+<div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+    <form (ngSubmit)="openConfirmationModal()">
+      <label class="block font-bold">Imię i Nazwisko:</label>
+      <input [(ngModel)]="order.customerName" name="customerName" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300" required>
+  
+      <label class="block font-bold mt-3">Telefon:</label>
+      <input [(ngModel)]="order.phone" name="phone" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300" required>
+  
+      <label class="block font-bold mt-3">Wybierz dzień dostawy:</label>
+      <select [(ngModel)]="order.orderDate" name="orderDate" class="w-full border rounded-md p-2 mt-1">
+        <option *ngFor="let date of availableDates" [value]="date">{{ date }}</option>
+      </select>
+
+      <label class="block font-bold mt-3">Uwagi:</label>
+      <input [(ngModel)]="order.note" name="note" class="w-full border rounded-md p-2 mt-1 focus:ring focus:ring-green-300">
+  
+      <div class="mt-5 space-y-3">
+        <button type="button" (click)="addBreadChoice()" class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
+          🍞 Dodaj kolejny chleb
+        </button>
+      </div>
+  
+      <button type="submit" class="w-full py-2 rounded-md mt-3 text-white font-bold bg-blue-500 hover:bg-blue-600">
+        ✅ Złóż zamówienie
+      </button>
+    </form>
+  </div>
+  
+  <div *ngIf="showConfirmationModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl text-left">
+        <h2 class="text-2xl font-bold text-center">Potwierdzenie zamówienia</h2>
+  
+        <div class="mt-3 text-gray-700">
+            <p><strong>Zamawiający:</strong> {{ order.customerName }}</p>
+            <p><strong>Telefon:</strong> {{ order.phone }}</p>
+            <p><strong>Data dostawy:</strong> {{ order.orderDate }}</p>
+        </div>
+  
+        <h3 class="mt-4 font-semibold">Zamówione chleby:</h3>
+        <div class="mt-2 text-gray-700">
+          <div *ngFor="let item of order.breads">
+            <span>🍞 {{ item.name }} - <strong>{{ item.quantity }} szt.</strong></span>
+          </div>
+        </div>
+  
+        <div class="mt-5 flex justify-center space-x-3">
+            <button (click)="submitOrder()" class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 flex items-center gap-2">
+                ✅ Potwierdź
+            </button>
+            <button (click)="closeConfirmationModal()" class="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 flex items-center gap-2">
+                ❌ Anuluj
+            </button>
+        </div>
+    </div>
+  </div>
+  

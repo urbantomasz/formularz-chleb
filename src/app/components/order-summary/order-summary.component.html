@@ -1,0 +1,68 @@
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+    <h2 class="text-2xl font-bold">📋 Podsumowanie Zamówień</h2>
+  
+    <!-- 🔹 Wybór daty -->
+    <div class="mt-4">
+      <label class="font-bold">📅 Wybierz dzień dostawy:</label>
+      <select [(ngModel)]="selectedDate" (change)="loadOrdersByDate()" class="w-full border rounded-md p-2 mt-1">
+        <option value="">Wszystkie zamówienia</option>
+        <option *ngFor="let date of ['Wtorek', 'Środa', 'Czwartek']" [value]="date">{{ date }}</option>
+      </select>
+    </div>
+  
+    <!-- 🔹 Lista zamówień -->
+    <div class="mt-4" *ngIf="orders.length > 0; else noOrders">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 p-2">Imię i Nazwisko</th>
+            <th class="border border-gray-300 p-2">Telefon</th>
+            <th class="border border-gray-300 p-2">Data</th>
+            <th class="border border-gray-300 p-2">Chleby</th>
+            <th class="border border-gray-300 p-2">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td class="border border-gray-300 p-2">{{ order.customerName }}</td>
+            <td class="border border-gray-300 p-2">{{ order.phone }}</td>
+            <td class="border border-gray-300 p-2">{{ order.orderDate }}</td>
+            <td class="border border-gray-300 p-2">
+              <ul>
+                <li *ngFor="let item of order.breads">🍞 {{ item.name }} - {{ item.quantity }} szt.</li>
+              </ul>
+            </td>
+            <td class="border border-gray-300 p-2">
+              <button (click)="deleteOrder(order.orderId!)" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                ❌ Usuń
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <ng-template #noOrders>
+      <p class="mt-4 text-gray-600">Brak zamówień.</p>
+    </ng-template>
+  
+    <!-- 🔹 Podsumowanie ilości chlebów -->
+    <div class="mt-6">
+      <h3 class="text-xl font-semibold">📊 Sumaryczna ilość chlebów:</h3>
+      <table class="w-full border-collapse border border-gray-300 mt-2">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 p-2">Rodzaj Chleba</th>
+            <th class="border border-gray-300 p-2">Ilość</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bread of breadSummary | keyvalue">
+            <td class="border border-gray-300 p-2">{{ bread.key }}</td>
+            <td class="border border-gray-300 p-2 font-bold">{{ bread.value }} szt.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
