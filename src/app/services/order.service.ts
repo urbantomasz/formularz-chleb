@@ -16,7 +16,7 @@ export interface Order {
   note?: string;
   customerName: string;
   phone: string;
-  orderDate: string;
+  orderDate?: Date;
   breads: OrderItem[];
 }
 
@@ -24,7 +24,7 @@ export interface Order {
   providedIn: 'root'
 })
 export class OrderService {
-    private apiUrl = `${environment.apiUrl}/breads`; 
+  private apiUrl = `${environment.apiUrl}/orders`; 
 
   http = inject(HttpClient)
 
