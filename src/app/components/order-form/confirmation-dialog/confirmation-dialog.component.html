@@ -21,7 +21,7 @@
     </h3>
   
     <ul class="text-left mt-2 space-y-1">
-      <li *ngFor="let bread of data.order.breads" class="flex items-center">
+      <li *ngFor="let bread of data.order.items" class="flex items-center">
         🍞 <span class="ml-2">{{ bread.name }} - <strong>{{ bread.quantity }} szt.</strong></span>
       </li>
     </ul>

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderService, Order, OrderItem } from '../../services/order.service';
-import { BreadService, Bread } from '../../services/bread.service';
+import { OrderService } from '../../services/order.service';
+import { BreadService } from '../../services/bread.service';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +16,9 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { OnlyDigitsDirective } from '../directives/only-digits.directive';
 import { OnlyLettersDirective } from '../directives/only-letters.directive';
+import { Bread } from '../../models/bread';
+import { Order } from '../../models/order';
+import { OrderItem } from '../../models/order-item';
 
 @Component({
   selector: 'app-order-form',
@@ -30,7 +33,7 @@ export class OrderFormComponent implements OnInit {
     customerName: '',
     phone: '',
     orderDate: undefined,
-    breads: []
+    items: []
   };
 
   breadTypes: Bread[] = [];  
@@ -89,7 +92,7 @@ export class OrderFormComponent implements OnInit {
 
   updateAvailableBreads() {
     // Get selected bread IDs
-    const selectedBreadIds = this.order.breads.map(b => b.breadId);
+    const selectedBreadIds = this.order.items.map(b => b.breadId);
   
     // Update availableBreads but DO NOT REMOVE items, just mark them as disabled
     this.availableBreads = this.breadTypes.map(bread => ({
@@ -122,25 +125,25 @@ export class OrderFormComponent implements OnInit {
 
     // Select the first available bread that isn't already chosen
     const newBread: OrderItem = { breadId: firstAvailable.breadId, name: firstAvailable.name, quantity: 1 };
-    this.order.breads.push(newBread);
+    this.order.items.push(newBread);
     this.updateAvailableBreads();
   }
 
 
   removeBreadChoice(index: number) {
-    this.order.breads.splice(index, 1);
+    this.order.items.splice(index, 1);
     this.updateAvailableBreads();
   }
 
   increaseQuantity(index: number) {
-    if (this.order.breads[index].quantity < 10) {
-      this.order.breads[index].quantity++;
+    if (this.order.items[index].quantity < 10) {
+      this.order.items[index].quantity++;
     }
   }
 
   decreaseQuantity(index: number) {
-    if (this.order.breads[index].quantity > 1) {
-      this.order.breads[index].quantity--;
+    if (this.order.items[index].quantity > 1) {
+      this.order.items[index].quantity--;
     }
   }
 
@@ -173,7 +176,7 @@ export class OrderFormComponent implements OnInit {
       customerName: '',
       phone: '',
       orderDate: this.availableDates[0].value,
-      breads: []
+      items: []
     };
     this.showValidationErrors = false;
   }
@@ -182,7 +185,7 @@ export class OrderFormComponent implements OnInit {
     return this.order.customerName.trim() !== '' &&
            this.order.phone.trim().length === 9 &&
            this.order.orderDate !== undefined &&
-           this.order.breads.length > 0;
+           this.order.items.length > 0;
   }
 
   openConfirmationDialog() {

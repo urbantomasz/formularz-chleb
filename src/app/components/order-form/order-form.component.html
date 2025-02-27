@@ -43,9 +43,9 @@
       </mat-form-field>
   
         
-      <h3 *ngIf="order.breads.length > 0" class="font-bold text-lg">🥖 Zamawiane chleby:</h3>
+      <h3 *ngIf="order.items.length > 0" class="font-bold text-lg">🥖 Zamawiane chleby:</h3>
         <!-- 🔹 Chleby -->
-        <div *ngFor="let bread of order.breads; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
+        <div *ngFor="let bread of order.items; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
     
             <!-- Wybór chleba -->
             <mat-form-field  subscriptSizing="dynamic" appearance="outline" class="custom-select w-1/2">
@@ -81,7 +81,7 @@
             🍞 Dodaj kolejny chleb
         </button>
 
-        <mat-error *ngIf="showValidationErrors && order.breads.length === 0">
+        <mat-error *ngIf="showValidationErrors && order.items.length === 0">
             Musisz dodać co najmniej jeden chleb
         </mat-error>
 
@@ -94,14 +94,25 @@
 </div>
   
 <!-- 🔹 Success/Error Messages -->
-<div *ngIf="orderSubmitted">
-    <mat-card class="max-w-xl mx-auto mt-5 text-center" [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
-      <mat-card-title class="text-2xl font-bold" [ngClass]="submissionSuccess ? 'text-green-600' : 'text-red-600'">
-        {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
-      </mat-card-title>
-      <p class="mt-3 text-gray-700">{{ submissionSuccess ? 'Dziękujemy za Twoje zamówienie.' : 'Przepraszamy za kłopoty, spróbuj ponownie.' }}</p>
-    </mat-card>
+<div *ngIf="orderSubmitted" 
+     class="max-w-xl mx-auto p-6 rounded-lg shadow-md mt-5 text-center"
+     [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
+  
+  <h2 class="text-2xl font-bold"
+      [ngClass]="submissionSuccess ? 'text-green-600' : 'text-red-600'">
+    {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
+  </h2>
+
+  <p class="mt-3 text-gray-700">
+    {{ submissionSuccess ? 'Dziękujemy za Twoje zamówienie.' : 'Przepraszamy za kłopoty, spróbuj ponownie.' }}
+  </p>
+
+  <!-- 🔹 Display contact info if submission failed -->
+  <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
+    📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
   </div>
+
+</div>
 
   <!-- 🔹 Full Page Loading Spinner -->
 <div *ngIf="isSubmitting" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
