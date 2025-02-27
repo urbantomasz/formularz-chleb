@@ -12,51 +12,57 @@
   </div>
 
   <!-- 🔹 Lista zamówień -->
-  <mat-table *ngIf="orders.length > 0; else noOrders" [dataSource]="orders" class="mat-elevation-z8 rounded-lg mt-4">
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
     <ng-container matColumnDef="customerName">
       <mat-header-cell *matHeaderCellDef> Imię i Nazwisko </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.customerName }} </mat-cell>
     </ng-container>
-
+  
     <ng-container matColumnDef="phone">
       <mat-header-cell *matHeaderCellDef> Telefon </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.phone }} </mat-cell>
     </ng-container>
-
+  
     <ng-container matColumnDef="orderDate">
-      <mat-header-cell *matHeaderCellDef> Data </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Data Zamówienia</mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.orderDate | formatDate }} </mat-cell>
     </ng-container>
-
+  
+    <!-- ✅ Zwiększona szerokość dla "Chleby" -->
     <ng-container matColumnDef="breads">
       <mat-header-cell *matHeaderCellDef> Chleby </mat-header-cell>
       <mat-cell *matCellDef="let order">
-        <ul class="list-disc text-left pl-5">
-          <li *ngFor="let item of order.breads">🍞 {{ item.name }} - {{ item.quantity }} szt.</li>
+        <ul class="list-disc text-left pl-5 text-xs">
+          <li *ngFor="let item of order.items"> {{ item.breadName }} - {{ item.quantity }} szt.</li>
         </ul>
       </mat-cell>
     </ng-container>
-
+  
+    <!-- ✅ Zwiększona szerokość dla "Uwagi" -->
     <ng-container matColumnDef="note">
       <mat-header-cell *matHeaderCellDef> Uwagi </mat-header-cell>
-      <mat-cell *matCellDef="let order"> {{ order.note }} </mat-cell>
+      <mat-cell *matCellDef="let order"> 
+        <span class="block whitespace-normal break-words text-xs">{{ order.note }}</span>
+      </mat-cell>
     </ng-container>
-
+  
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef> Akcje </mat-header-cell>
       <mat-cell *matCellDef="let order">
-        <button mat-raised-button class="!bg-yellow-500 !text-white" (click)="modifyOrder(order.orderId!)">
-         Edytuj
+        <button mat-button color="primary" (click)="modifyOrder(order.orderId!)">
+          ✏️ Edytuj
         </button>
-        <button mat-raised-button class="!bg-red-500 !text-white" (click)="confirmDelete(order.orderId!)">
-          Usuń
+        <button mat-button color="warn" (click)="confirmDelete(order.orderId!)">
+          ❌ Usuń
         </button>
       </mat-cell>
     </ng-container>
-
+  
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
+  
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 
   <!-- 🔹 Brak zamówień -->
   <ng-template #noOrders>

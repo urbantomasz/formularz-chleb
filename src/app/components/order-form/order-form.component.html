@@ -39,7 +39,7 @@
       <!-- 🔹 Uwagi -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Uwagi</mat-label>
-        <textarea rows="3" maxlength="200" matInput></textarea>
+        <textarea name="note"[(ngModel)]="order.note" rows="3" maxlength="200" matInput></textarea>
       </mat-form-field>
   
         
@@ -104,9 +104,14 @@
   </h2>
 
   <p class="mt-3 text-gray-700">
-    {{ submissionSuccess ? 'Dziękujemy za Twoje zamówienie.' : 'Przepraszamy za kłopoty, spróbuj ponownie.' }}
+    <ng-container *ngIf="submissionSuccess; else errorText">
+      Dziękujemy za Twoje zamówienie.
+    </ng-container>
+    <ng-template #errorText>
+      Przepraszamy za kłopoty, nie udało się potwierdzić zamówienia.<br>
+      Prosimy o kontakt telefoniczny w celu jego złożenia.
+    </ng-template>
   </p>
-
   <!-- 🔹 Display contact info if submission failed -->
   <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
     📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>

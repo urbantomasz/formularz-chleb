@@ -1,0 +1,11 @@
+.mat-column-breads{
+    flex: 0 0 30%;
+}
+
+.mat-column-note{
+    flex: 0 0 15%;
+}
+
+.mat-column-actions{
+    flex: 0 0 20%;
+}

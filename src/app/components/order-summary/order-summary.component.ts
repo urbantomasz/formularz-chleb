@@ -10,19 +10,25 @@ import { ConfirmDialog } from './confirm-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormatDatePipe } from "../../pipes/format-date.pipe";
-import { Order } from '../../models/order';
+import { OrderDto } from '../../models/order-dto';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-order-summary',
   standalone: true,
   imports: [
     CommonModule, FormsModule, MatTableModule, MatButtonModule, MatSelectModule, MatCardModule, MatFormFieldModule,
-    FormatDatePipe
+    FormatDatePipe, MatPaginatorModule, 
 ],
-  templateUrl: './order-summary.component.html'
+  templateUrl: './order-summary.component.html',
+  styleUrl: './order-summary.component.css'
 })
-export class OrderSummaryComponent implements OnInit {
-  orders: Order[] = [];
+export class OrderSummaryComponent implements OnInit, AfterViewInit  {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  orders: OrderDto[] = [];
+  dataSource = new MatTableDataSource<OrderDto>([]);
   selectedDate: string = '';
   displayedColumns: string[] = ['customerName', 'phone', 'orderDate', 'breads', 'note', 'actions'];
   breadSummaryArray: { name: string; quantity: number }[] = [];
@@ -34,9 +40,15 @@ export class OrderSummaryComponent implements OnInit {
     this.loadOrders();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;  // ✅ Assign paginator after view is initialized
+  }
+
+
   loadOrders() {
     this.orderService.getOrders().subscribe({
       next: (data) => {
+        this.dataSource.data = data;
         this.orders = data;
         this.calculateBreadSummary();
       },
@@ -51,11 +63,17 @@ export class OrderSummaryComponent implements OnInit {
     }
     this.orderService.getOrdersByDate(this.selectedDate).subscribe({
       next: (data) => {
+        this.dataSource.data = data;
         this.orders = data;
         this.calculateBreadSummary();
       },
       error: () => alert('❌ Brak zamówień na wybrany dzień!'),
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   confirmDelete(orderId: number) {
@@ -88,10 +106,10 @@ export class OrderSummaryComponent implements OnInit {
     const breadCount: { [key: string]: number } = {};
     this.orders.forEach(order => {
       order.items.forEach(bread => {
-        if (!breadCount[bread.name]) {
-          breadCount[bread.name] = 0;
+        if (!breadCount[bread.breadName]) {
+          breadCount[bread.breadName] = 0;
         }
-        breadCount[bread.name] += bread.quantity;
+        breadCount[bread.breadName] += bread.quantity;
       });
     });
 

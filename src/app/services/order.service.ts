@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Order } from '../models/order';
+import { OrderDto } from '../models/order-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +13,12 @@ export class OrderService {
 
   http = inject(HttpClient)
 
-  getOrdersByDate(date: string): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/report/${date}`);
+  getOrdersByDate(date: string): Observable<OrderDto[]> {
+    return this.http.get<OrderDto[]>(`${this.apiUrl}/report/${date}`);
   }
 
-  getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}`);
+  getOrders(): Observable<OrderDto[]> {
+    return this.http.get<OrderDto[]>(`${this.apiUrl}`);
   }
 
   submitOrder(order: Order): Observable<any> {
