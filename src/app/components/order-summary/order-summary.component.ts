@@ -14,23 +14,26 @@ import { OrderDto } from '../../models/order-dto';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild, AfterViewInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-order-summary',
   standalone: true,
   imports: [
     CommonModule, FormsModule, MatTableModule, MatButtonModule, MatSelectModule, MatCardModule, MatFormFieldModule,
-    FormatDatePipe, MatPaginatorModule, 
+    FormatDatePipe, MatPaginatorModule, MatIconModule
 ],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.css'
 })
 export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  orders: OrderDto[] = [];
+  allOrders: OrderDto[] = []; 
+  filteredOrders: OrderDto[] = []
   dataSource = new MatTableDataSource<OrderDto>([]);
-  selectedDate: string = '';
-  displayedColumns: string[] = ['customerName', 'phone', 'orderDate', 'breads', 'note', 'actions'];
+  availableDates: Date[] = [];
+  selectedDate?: Date = undefined;
+  displayedColumns: string[] = ['orderDate', 'customerName', 'phone', 'breads', 'note', 'actions'];
   breadSummaryArray: { name: string; quantity: number }[] = [];
 
   private orderService = inject(OrderService);
@@ -41,33 +44,45 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;  // ✅ Assign paginator after view is initialized
+    this.dataSource.paginator = this.paginator;  
   }
 
 
   loadOrders() {
     this.orderService.getOrders().subscribe({
       next: (data) => {
-        this.dataSource.data = data;
-        this.orders = data;
-        this.calculateBreadSummary();
+        this.allOrders = data.orders;
+        this.availableDates = data.dates;
+        this.filterOrders();
       },
       error: () => alert('❌ Błąd pobierania zamówień!'),
     });
   }
 
-  loadOrdersByDate() {
-    if (this.selectedDate === '') {
-      this.loadOrders();
-      return;
+  filterOrders() {
+    if (!this.selectedDate) {
+      this.filteredOrders = [...this.allOrders]; // Jeśli brak filtra, wyświetl wszystkie zamówienia
+    } else {
+      this.filteredOrders = this.allOrders.filter(order => order.orderDate === this.selectedDate);
     }
-    this.orderService.getOrdersByDate(this.selectedDate).subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        this.orders = data;
-        this.calculateBreadSummary();
+    this.dataSource.data = this.filteredOrders;
+  }
+
+
+  generateExcelReport(date?: Date) {
+
+    this.orderService.getOrdersReportExcel(date).subscribe({
+      next: (blob) => {
+        const a = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = `Raport_${this.selectedDate}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
       },
-      error: () => alert('❌ Brak zamówień na wybrany dzień!'),
+      error: () => alert('❌ Błąd generowania raportu!'),
     });
   }
 
@@ -91,8 +106,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   deleteOrder(orderId: number) {
     this.orderService.deleteOrder(orderId).subscribe({
       next: () => {
-        this.orders = this.orders.filter(o => o.orderId !== orderId);
-        this.calculateBreadSummary();
+        this.filteredOrders = this.allOrders.filter(o => o.orderId !== orderId);
       },
       error: () => alert('❌ Nie udało się usunąć zamówienia!'),
     });
@@ -100,22 +114,5 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
 
   modifyOrder(orderId: number) {
     alert(`Edytowanie zamówienia ${orderId} - do zaimplementowania!`);
-  }
-
-  calculateBreadSummary() {
-    const breadCount: { [key: string]: number } = {};
-    this.orders.forEach(order => {
-      order.items.forEach(bread => {
-        if (!breadCount[bread.breadName]) {
-          breadCount[bread.breadName] = 0;
-        }
-        breadCount[bread.breadName] += bread.quantity;
-      });
-    });
-
-    this.breadSummaryArray = Object.keys(breadCount).map(name => ({
-      name,
-      quantity: breadCount[name]
-    }));
   }
 }

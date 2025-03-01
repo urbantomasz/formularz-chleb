@@ -1,20 +1,45 @@
 <div class="max-w-4xl mx-auto p-6 rounded-lg shadow-md mt-5">
-  <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Podsumowanie Zamówień</h2>
-  <!-- 🔹 Wybór daty -->
-  <div class="mt-4">
+  <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Aktualne Zamówienia</h2>
+
+  <div class="mt-4 flex items-center gap-4">
+    <!-- Wybór daty -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>📅 Wybierz dzień dostawy</mat-label>
-      <mat-select [(ngModel)]="selectedDate" (selectionChange)="loadOrdersByDate()">
-        <mat-option value="">Wszystkie zamówienia</mat-option>
-        <mat-option *ngFor="let date of ['Wtorek', 'Środa', 'Czwartek']" [value]="date">{{ date }}</mat-option>
+      <mat-select [(ngModel)]="selectedDate" (selectionChange)="filterOrders()">
+        <mat-option [value]="undefined">Wszystkie zamówienia</mat-option>
+        <mat-option *ngFor="let date of availableDates" [value]="date">
+          {{ date | formatDate }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <!-- 🔹 Lista zamówień -->
+    <!-- Przycisk do generowania raportu -->
+    <div class="flex flex-wrap gap-2">
+      <!-- Przycisk dla wszystkich zamówień -->
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="generateExcelReport(undefined)"
+        *ngIf="selectedDate === undefined"
+      >
+        📄 Pobierz raport dla wszystkich zamówień
+      </button>
+  
+      <!-- Przycisk dla każdej dostępnej daty -->
+      <button 
+        mat-raised-button 
+        color="accent" 
+        *ngFor="let date of availableDates" 
+        (click)="generateExcelReport(date)"
+      >
+        📆 Pobierz raport: {{ date | formatDate }}
+      </button>
+    </div>
+   
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
     <ng-container matColumnDef="customerName">
-      <mat-header-cell *matHeaderCellDef> Imię i Nazwisko </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Kto </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.customerName }} </mat-cell>
     </ng-container>
   
@@ -24,13 +49,13 @@
     </ng-container>
   
     <ng-container matColumnDef="orderDate">
-      <mat-header-cell *matHeaderCellDef> Data Zamówienia</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Kiedy</mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.orderDate | formatDate }} </mat-cell>
     </ng-container>
   
     <!-- ✅ Zwiększona szerokość dla "Chleby" -->
     <ng-container matColumnDef="breads">
-      <mat-header-cell *matHeaderCellDef> Chleby </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Zamówienie </mat-header-cell>
       <mat-cell *matCellDef="let order">
         <ul class="list-disc text-left pl-5 text-xs">
           <li *ngFor="let item of order.items"> {{ item.breadName }} - {{ item.quantity }} szt.</li>
@@ -42,14 +67,14 @@
     <ng-container matColumnDef="note">
       <mat-header-cell *matHeaderCellDef> Uwagi </mat-header-cell>
       <mat-cell *matCellDef="let order"> 
-        <span class="block whitespace-normal break-words text-xs">{{ order.note }}</span>
+        <span class="block whitespace-normal text-nowrap text-xs">{{ order.note }}</span>
       </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef> Akcje </mat-header-cell>
       <mat-cell *matCellDef="let order">
-        <button mat-button color="primary" (click)="modifyOrder(order.orderId!)">
+        <button mat-button class="text-xs" (click)="modifyOrder(order.orderId!)">
           ✏️ Edytuj
         </button>
         <button mat-button color="warn" (click)="confirmDelete(order.orderId!)">
@@ -62,29 +87,10 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
   
-  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <!-- <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
 
   <!-- 🔹 Brak zamówień -->
   <ng-template #noOrders>
     <p class="mt-4 text-gray-600">Brak zamówień.</p>
   </ng-template>
 
-  <!-- 🔹 Podsumowanie ilości chlebów -->
-  <div class="mt-6 p-4">
-    <mat-card-title>📊 Sumaryczna ilość chlebów:</mat-card-title>
-    <mat-table [dataSource]="breadSummaryArray" class="mat-elevation-z8 mt-2">
-      <ng-container matColumnDef="breadName">
-        <mat-header-cell *matHeaderCellDef> Rodzaj Chleba </mat-header-cell>
-        <mat-cell *matCellDef="let bread"> {{ bread.name }} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="quantity">
-        <mat-header-cell *matHeaderCellDef> Ilość </mat-header-cell>
-        <mat-cell *matCellDef="let bread"> <b>{{ bread.quantity }} szt.</b> </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="['breadName', 'quantity']"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: ['breadName', 'quantity'];"></mat-row>
-    </mat-table>
-  </div>
-</div>

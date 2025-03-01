@@ -9,3 +9,74 @@
 .mat-column-actions{
     flex: 0 0 20%;
 }
+
+mat-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #fff; /* tło nagłówka, może być dostosowane do potrzeb */
+  }
+
+/* ✅ MatTable Styling - Remove Bottom Border & Shadow */
+mat-table {
+    overflow-y: auto;
+    max-height: 600px; /* Można dostosować do potrzeb */
+    background-color: white;  
+    border-radius: 10px;  /* Rounded top, flat bottom */
+    border: 2px solid #ddd;  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  }
+  
+  /* ✅ MatPaginator Styling - Remove Top Border & Shadow */
+  mat-paginator {
+    background-color: white;  
+    border-radius: 0 0 10px 10px; /* Flat top, rounded bottom */
+    border: 2px solid #ddd;
+    border-top: none;  /* Remove top border */
+    box-shadow: none; /* Remove shadow */
+  }
+  
+  /* ✅ Adjust table headers */
+  mat-header-cell {
+    background-color: #f5f5f5; 
+    font-weight: bold;
+    text-align: center;
+     justify-content: center;
+    vertical-align: middle; 
+  }
+
+
+
+  /* ✅ Table cells */
+  mat-cell, mat-header-cell {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* ✅ Center text inside the actions column */
+  mat-cell:last-child {
+    text-align: center;
+  }
+  
+  /* ✅ Fix pagination alignment */
+  .mat-paginator {
+    margin-top: 10px;
+  }
+  
+  /* Truncate text in the "Uwagi" column */
+.truncate-text {
+    white-space: nowrap;  /* Prevents text wrapping */
+    overflow: hidden;      /* Hides overflow */
+    text-overflow: ellipsis; /* Shows "..." when text overflows */
+    max-width: 150px;      /* Adjust width as needed */
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  
+  /* ✅ Center text inside the summary table only */
+.summary-table mat-cell,
+.summary-table mat-header-cell {
+  text-align: center !important;   /* Center text */
+  justify-content: center !important; /* Ensure flex elements are centered */
+}

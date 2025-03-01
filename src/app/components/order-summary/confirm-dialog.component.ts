@@ -10,8 +10,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
       <h2>{{ data.message }}</h2>
     </mat-dialog-content>
     <mat-dialog-actions class="flex justify-center gap-4 mt-4">
-    <button mat-raised-button color="primary" (click)="dialogRef.close(true)">✅ Tak</button>
-        <button mat-raised-button color="warn" (click)="dialogRef.close(false)">❌ Nie</button>
+    <button type="button" mat-raised-button (click)="dialogRef.close(true)">✅ Tak</button>
+    <button type="button" mat-raised-button  (click)="dialogRef.close(false)">❌ Nie</button>
     
     </mat-dialog-actions>
   `,

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Order } from '../models/order';
 import { OrderDto } from '../models/order-dto';
+import { OrderDataDto } from '../models/order-data-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,18 @@ export class OrderService {
 
   http = inject(HttpClient)
 
-  getOrdersByDate(date: string): Observable<OrderDto[]> {
-    return this.http.get<OrderDto[]>(`${this.apiUrl}/report/${date}`);
+  getOrders(): Observable<OrderDataDto> {
+    return this.http.get<OrderDataDto>(`${this.apiUrl}`);
   }
 
-  getOrders(): Observable<OrderDto[]> {
-    return this.http.get<OrderDto[]>(`${this.apiUrl}`);
+  getOrdersReport(date: Date): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/report/${date}`);
   }
 
+  getOrdersReportExcel(date?: Date): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/report/excel/${date}`, { responseType: 'blob' });
+  }
+  
   submitOrder(order: Order): Observable<any> {
     return this.http.post(`${this.apiUrl}`, order);
   }
