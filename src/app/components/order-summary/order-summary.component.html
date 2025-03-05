@@ -1,5 +1,9 @@
 <div class="max-w-4xl mx-auto p-6 rounded-lg shadow-md mt-5">
+
+       
   <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Aktualne Zamówienia</h2>
+
+
 
   <div class="mt-4 flex items-center gap-4">
     <!-- Wybór daty -->
@@ -12,30 +16,16 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <button 
+    mat-raised-button 
+    color="accent" 
+    (click)="generateExcelReport(selectedDate)"
+  >
+    📆 Pobierz raport 
+  </button>
   </div>
 
-    <!-- Przycisk do generowania raportu -->
-    <div class="flex flex-wrap gap-2">
-      <!-- Przycisk dla wszystkich zamówień -->
-      <button 
-        mat-raised-button 
-        color="primary" 
-        (click)="generateExcelReport(undefined)"
-        *ngIf="selectedDate === undefined"
-      >
-        📄 Pobierz raport dla wszystkich zamówień
-      </button>
-  
-      <!-- Przycisk dla każdej dostępnej daty -->
-      <button 
-        mat-raised-button 
-        color="accent" 
-        *ngFor="let date of availableDates" 
-        (click)="generateExcelReport(date)"
-      >
-        📆 Pobierz raport: {{ date | formatDate }}
-      </button>
-    </div>
+
    
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
     <ng-container matColumnDef="customerName">
