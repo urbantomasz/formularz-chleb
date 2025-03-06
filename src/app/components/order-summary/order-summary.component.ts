@@ -15,6 +15,10 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild, AfterViewInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { Order } from '../../models/order';
+import { OrderEditComponent } from '../order-edit/order-edit.component';
+import { BreadService } from '../../services/bread.service';
+import { Bread } from '../../models/bread';
 
 @Component({
   selector: 'app-order-summary',
@@ -35,12 +39,18 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   selectedDate?: Date = undefined;
   displayedColumns: string[] = ['orderDate', 'customerName', 'phone', 'breads', 'note', 'actions'];
   breadSummaryArray: { name: string; quantity: number }[] = [];
+  breadTypes: Bread[] = [];   
 
   private orderService = inject(OrderService);
+  private breadService = inject(BreadService);
   private dialog = inject(MatDialog);
 
   ngOnInit() {
     this.loadOrders();
+    this.breadService.getBreads().subscribe({
+      next: (data) =>{
+      this.breadTypes = data;
+    }})
   }
 
   ngAfterViewInit() {
@@ -106,13 +116,36 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   deleteOrder(orderId: number) {
     this.orderService.deleteOrder(orderId).subscribe({
       next: () => {
-        this.filteredOrders = this.allOrders.filter(o => o.orderId !== orderId);
+        // Remove the deleted order from allOrders
+        this.allOrders = this.allOrders.filter(o => o.orderId !== orderId);
+        
+        // Reapply filtering to update filteredOrders and dataSource
+        this.filterOrders();
       },
       error: () => alert('❌ Nie udało się usunąć zamówienia!'),
     });
   }
+  
 
-  modifyOrder(orderId: number) {
-    alert(`Edytowanie zamówienia ${orderId} - do zaimplementowania!`);
+  openEditDialog(order: Order) {
+    const dialogRef = this.dialog.open(OrderEditComponent, {
+      width: '600px',
+      data: {
+        order: order,
+        breads: this.breadTypes,
+        dates: this.availableDates
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update order list after successful edit
+        const index = this.allOrders.findIndex(o => o.orderId === result.orderId);
+        if (index !== -1) {
+          this.allOrders[index] = result;
+          this.dataSource.data = [...this.allOrders]; // Refresh the table
+        }
+      }
+    });
   }
 }

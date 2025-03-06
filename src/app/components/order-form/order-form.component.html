@@ -1,125 +1,85 @@
-<div *ngIf="!orderSubmitted" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
-    <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
-    <form (ngSubmit)="openConfirmationDialog()" class="p-4 space-y-4">
-      <!-- 🔹 Imię i Nazwisko -->
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Imię i Nazwisko</mat-label>
-        <input onlyLetters matInput [(ngModel)]="order.customerName" name="customerName" required>
-        <mat-error *ngIf="showValidationErrors && !order.customerName">To pole jest wymagane.</mat-error>
-      </mat-form-field>
-  
-    <!-- 🔹 Telefon -->
-    <mat-form-field appearance="outline" class="w-full">
-        <mat-label>📞 Telefon:</mat-label>
-        <span matTextPrefix>+48 &nbsp;</span>
-        <input  onlyDigits
-        matInput 
-        [(ngModel)]="order.phone" 
-        name="phone"
-        placeholder="123456789"
-        minlength="9"maxlength="9"
-        pattern="[0-9]*"
-        required
-        type="tel">
-        <mat-error *ngIf="showValidationErrors && (order.phone?.length || 0) < 9">
-        Numer telefonu musi mieć 9 cyfr.
-        </mat-error>
-    </mat-form-field>
-  
-      <!-- 🔹 Wybór daty dostawy -->
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>📅 Wybierz dzień dostawy</mat-label>
-        <mat-select [(ngModel)]="order.orderDate" name="orderDate">
-          <mat-option  *ngFor="let date of availableDates" [value]="date.value">
-            {{ date.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+<form class="bg-white p-4 space-y-4">
+  <!-- 🔹 Imię i Nazwisko -->
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Imię i Nazwisko</mat-label>
+    <input onlyLetters matInput [(ngModel)]="order.customerName" name="customerName" required>
+    <mat-error *ngIf="showValidationErrors && !order.customerName">To pole jest wymagane.</mat-error>
+  </mat-form-field>
 
-      <!-- 🔹 Uwagi -->
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Uwagi</mat-label>
-        <textarea name="note"[(ngModel)]="order.note" rows="3" maxlength="200" matInput></textarea>
-      </mat-form-field>
-  
-        
-      <h3 *ngIf="order.items.length > 0" class="font-bold text-lg">🥖 Zamawiane chleby:</h3>
-        <!-- 🔹 Chleby -->
-        <div *ngFor="let bread of order.items; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
+<!-- 🔹 Telefon -->
+<mat-form-field appearance="outline" class="w-full">
+    <mat-label>📞 Telefon:</mat-label>
+    <span matTextPrefix>+48 &nbsp;</span>
+    <input  onlyDigits
+    matInput 
+    [(ngModel)]="order.phone" 
+    name="phone"
+    placeholder="123456789"
+    minlength="9"maxlength="9"
+    pattern="[0-9]*"
+    required
+    type="tel">
+    <mat-error *ngIf="showValidationErrors && (order.phone?.toString()?.length || 0) < 9">
+    Numer telefonu musi mieć 9 cyfr.
+    </mat-error>
+</mat-form-field>
+
+  <!-- 🔹 Wybór daty dostawy -->
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>📅 Dzień dostawy</mat-label>
+    <mat-select [(ngModel)]="order.orderDate" name="orderDate">
+      <mat-option  *ngFor="let date of availableDates" [value]="date.value">
+        {{ date.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- 🔹 Uwagi -->
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Uwagi</mat-label>
+    <textarea name="note"[(ngModel)]="order.note" maxlength="200" matInput></textarea>
+  </mat-form-field>
+
     
-            <!-- Wybór chleba -->
-            <mat-form-field  subscriptSizing="dynamic" appearance="outline" class="custom-select w-1/2">
-                <mat-label>Wybierz chleb</mat-label>
-                <mat-select appearance="outline" [(ngModel)]="bread.breadId" name="bread{{i}}" (selectionChange)="onBreadSelectionChange(i, $event.value)">
-                    <mat-option *ngFor="let b of availableBreads" [value]="b.breadId" [disabled]="b.disabled">
-                        {{ b.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        
-            <!-- Ilość chleba -->
-            <div class="flex items-center justify-center space-x-2">
-                <button type="button" mat-mini-fab  (click)="decreaseQuantity(i)" [disabled]="bread.quantity <= 1" class="flex items-center justify-center">
-                    <mat-icon>remove</mat-icon>
-                </button>
-                <span class="text-lg font-bold w-6 text-center">{{ bread.quantity }}</span>
-                <button type="button" mat-mini-fab (click)="increaseQuantity(i)" [disabled]="bread.quantity >= 10" class="flex items-center justify-center">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </div>
-        
-            <!-- Usuń chleb -->
-            <button mat-raised-button color="warn" (click)="removeBreadChoice(i)" class="flex items-center justify-center !bg-red-500 !text-white">
-                Usuń
+  <h3 *ngIf="order.items.length > 0" class="font-bold text-lg">🥖 Zamawiane chleby:</h3>
+    <!-- 🔹 Chleby -->
+    <div *ngFor="let bread of order.items; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
+
+        <!-- Wybór chleba -->
+        <mat-form-field  subscriptSizing="dynamic" appearance="outline" class="custom-select w-1/2">
+            <mat-label>Wybrany Chleb</mat-label>
+            <mat-select appearance="outline" [(ngModel)]="bread.breadId" name="bread{{i}}" (selectionChange)="onBreadSelectionChange(i, $event.value)">
+                <mat-option *ngFor="let b of availableBreads" [value]="b.breadId" [disabled]="b.disabled">
+                    {{ b.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    
+        <!-- Ilość chleba -->
+        <div class="flex items-center justify-center space-x-2">
+            <button type="button" mat-mini-fab  (click)="decreaseQuantity(i)" [disabled]="bread.quantity <= 1" class="flex items-center justify-center">
+                <mat-icon>remove</mat-icon>
             </button>
-        
+            <span class="text-lg font-bold w-6 text-center">{{ bread.quantity }}</span>
+            <button type="button" mat-mini-fab (click)="increaseQuantity(i)" [disabled]="bread.quantity >= 10" class="flex items-center justify-center">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
-        
-
-        <!-- 🔹 Powiększony Przycisk "Dodaj Chleb" -->
-        <button class="w-full !text-lg p-4 !h-14 !bg-green-400 !text-white" mat-raised-button color="primary" type="button" (click)="addBreadChoice()">
-            🍞 Dodaj kolejny chleb
+    
+        <!-- Usuń chleb -->
+        <button mat-raised-button color="warn" (click)="removeBreadChoice(i)" class="flex items-center justify-center !bg-red-500 !text-white">
+            Usuń
         </button>
+    
+    </div>
+    
 
-        <mat-error *ngIf="showValidationErrors && order.items.length === 0">
-            Musisz dodać co najmniej jeden chleb
-        </mat-error>
+    <!-- 🔹 Powiększony Przycisk "Dodaj Chleb" -->
+    <button class="w-full !text-lg p-4 !h-14 !bg-green-400 !text-white" mat-raised-button color="primary" type="button" (click)="addBreadChoice()">
+        🍞 Dodaj kolejny chleb
+    </button>
 
-        <!-- 🔹 Powiększony Przycisk "Złóż Zamówienie" -->
-        <button [disabled]="!isFormValid()" class="w-full !text-lg p-4 !h-16" mat-raised-button color="accent" type="submit">
-            ✅ Złóż zamówienie
-        </button>
-        
-    </form>
-</div>
-  
-<!-- 🔹 Success/Error Messages -->
-<div *ngIf="orderSubmitted" 
-     class="max-w-xl mx-auto p-6 rounded-lg shadow-md mt-5 text-center"
-     [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
-  
-  <h2 class="text-2xl font-bold"
-      [ngClass]="submissionSuccess ? 'text-green-600' : 'text-red-600'">
-    {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
-  </h2>
-
-  <p class="mt-3 text-gray-700">
-    <ng-container *ngIf="submissionSuccess; else errorText">
-      Dziękujemy za Twoje zamówienie.
-    </ng-container>
-    <ng-template #errorText>
-      Przepraszamy za kłopoty, nie udało się potwierdzić zamówienia.<br>
-      Prosimy o kontakt telefoniczny w celu jego złożenia.
-    </ng-template>
-  </p>
-  <!-- 🔹 Display contact info if submission failed -->
-  <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
-    📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
-  </div>
-
-</div>
-
-  <!-- 🔹 Full Page Loading Spinner -->
-<div *ngIf="isSubmitting" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-    <mat-progress-spinner mode="indeterminate" diameter="64" color="accent"></mat-progress-spinner>
-  </div>
+    <mat-error *ngIf="showValidationErrors && order.items.length === 0">
+        Musisz dodać co najmniej jeden chleb
+    </mat-error>
+</form>

@@ -4,7 +4,7 @@ export interface Order {
     orderId?: number;
     note?: string;
     customerName: string;
-    phone: string;
+    phone?: number;
     orderDate?: Date;
     items: OrderItem[];
   }

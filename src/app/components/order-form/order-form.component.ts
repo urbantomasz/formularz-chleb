@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
 import { BreadService } from '../../services/bread.service';
@@ -12,7 +12,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { OnlyDigitsDirective } from '../directives/only-digits.directive';
 import { OnlyLettersDirective } from '../directives/only-letters.directive';
@@ -28,54 +27,18 @@ import { OrderItem } from '../../models/order-item';
   templateUrl: './order-form.component.html',
   styleUrl: './order-form.component.css'
 })
-export class OrderFormComponent implements OnInit {
-  order: Order = {
-    customerName: '',
-    phone: '',
-    orderDate: undefined,
-    items: []
-  };
-
-  breadTypes: Bread[] = [];  
-  availableBreads: Bread[] = [];
-  availableDates: { label: string; value: Date }[] = [];
-  showValidationErrors = true;
-  isSubmitting = false;
-  orderSubmitted = false;
-  submissionSuccess = false;
-
-  private orderService = inject(OrderService);
-  private breadService = inject(BreadService);
-  private dialog = inject(MatDialog);
-  private router = inject(Router);
-
-  ngOnInit() {
-    //this.redirectIfNotMonday();
-    this.setAvailableDates();
+export class OrderFormComponent implements OnChanges {
+  ngOnChanges(changes: SimpleChanges): void {
     this.loadBreads();
   }
+  @Input() order!: Order;
+  @Input() breadTypes: Bread[] = [];  
+  @Input() availableDates: { label: string; value: Date }[] = [];
+  availableBreads: Bread[] = [];
+  showValidationErrors = true;
 
-  redirectIfNotMonday() {
-    const today = new Date();
-    if (today.getDay() !== 1) {
-      this.router.navigate(['/summary']);
-    }
-  }
+ 
 
-  setAvailableDates() {
-    const today = new Date();
-    const nextTuesday = this.getNextWeekday(today, 2);
-    const nextWednesday = this.getNextWeekday(today, 3);
-    const nextThursday = this.getNextWeekday(today, 4);
-  
-    this.availableDates = [
-      { label: `Wtorek (${this.formatDate(nextTuesday)})`, value: nextTuesday },
-      { label: `Środa (${this.formatDate(nextWednesday)})`, value: nextWednesday },
-      { label: `Czwartek (${this.formatDate(nextThursday)})`, value: nextThursday }
-    ];
-  
-    this.order.orderDate = this.availableDates[0].value; // Default selection
-  }
   
   formatDate(date: Date): string {
     return date.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -102,21 +65,14 @@ export class OrderFormComponent implements OnInit {
   }
   
   onBreadSelectionChange(index: number, newBreadId: number) {
-    // ✅ Refresh disabled items
     this.updateAvailableBreads();
   }
   
-
-
   loadBreads() {
-    this.breadService.getBreads().subscribe({
-      next: (data) => {
-        this.breadTypes = data;
         this.updateAvailableBreads();
-        this.addBreadChoice();
-      },
-      error: () => alert('❌ Nie udało się pobrać listy chlebów!')
-    });
+        if(this.order.items.length === 0){
+          this.addBreadChoice();
+        }
   }
 
   addBreadChoice() {
@@ -154,27 +110,10 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  submitOrder() {
-    this.isSubmitting = true; 
-  
-    this.orderService.submitOrder(this.order).subscribe({
-      next: () => {
-        this.submissionSuccess = true;
-        this.orderSubmitted = true;
-        this.isSubmitting = false;  
-      },
-      error: () => {
-        this.submissionSuccess = false;
-        this.orderSubmitted = true;
-        this.isSubmitting = false; 
-      }
-    });
-  }
-
   resetForm() {
     this.order = {
       customerName: '',
-      phone: '',
+      phone: undefined,
       orderDate: this.availableDates[0].value,
       items: []
     };
@@ -183,27 +122,8 @@ export class OrderFormComponent implements OnInit {
 
   isFormValid(): boolean {
     return this.order.customerName.trim() !== '' &&
-           this.order.phone.trim().length === 9 &&
+           this.order.phone?.toString().length === 9 &&
            this.order.orderDate !== undefined &&
            this.order.items.length > 0;
   }
-
-  openConfirmationDialog() {
-    if (!this.isFormValid()) {
-      this.showValidationErrors = true;
-      return;
-    }
-
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: { order: this.order }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        this.submitOrder();
-      }
-    });
-  }
-
 }

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-center">✏️ Edytuj Zamówienie</h2>
+
+<mat-dialog-content class="p-4">
+  <app-order-form
+    [order]="order"
+    [breadTypes]="availableBreads"
+    [availableDates]="availableDates"
+    #orderForm>
+  </app-order-form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex justify-end p-4 space-x-4">
+  <button mat-button (click)="cancel()">❌ Anuluj</button>
+  <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!orderForm.isFormValid()">💾 Zapisz</button>
+</mat-dialog-actions>

@@ -1,0 +1,47 @@
+<div *ngIf="!orderSubmitted" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+    <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
+
+    <app-order-form
+    [availableDates]="availableDates"
+    [breadTypes]="breadTypes"
+    [order]="order"
+    ></app-order-form>
+
+
+        <!-- 🔹 Powiększony Przycisk "Złóż Zamówienie" -->
+        <button [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" class="w-full !text-lg p-4 !h-14" mat-raised-button color="primary" type="button">
+            ✅ Złóż zamówienie
+        </button>
+        
+
+  
+<!-- 🔹 Success/Error Messages -->
+<div *ngIf="orderSubmitted" 
+     class="max-w-xl mx-auto p-6 rounded-lg shadow-md mt-5 text-center"
+     [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
+  
+  <h2 class="text-2xl font-bold"
+      [ngClass]="submissionSuccess ? 'text-green-600' : 'text-red-600'">
+    {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
+  </h2>
+
+  <p class="mt-3 text-gray-700">
+    <ng-container *ngIf="submissionSuccess; else errorText">
+      Dziękujemy za Twoje zamówienie.
+    </ng-container>
+    <ng-template #errorText>
+      Przepraszamy za kłopoty, nie udało się potwierdzić zamówienia.<br>
+      Prosimy o kontakt telefoniczny w celu jego złożenia.
+    </ng-template>
+  </p>
+  <!-- 🔹 Display contact info if submission failed -->
+  <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
+    📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
+  </div>
+
+</div>
+
+  <!-- 🔹 Full Page Loading Spinner -->
+<div *ngIf="isSubmitting" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <mat-progress-spinner mode="indeterminate" diameter="64" color="accent"></mat-progress-spinner>
+  </div>
