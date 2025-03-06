@@ -6,6 +6,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenProvider = inject(TokenProvider); 
   const token = tokenProvider.getToken();
 
+  if (req.url.includes('accounts.google.com')) {
+    return next(req);
+  }
+
   if (token) {
     const cloned = req.clone({
       setHeaders: {

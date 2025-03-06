@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private oauthService: OAuthService, private tokenProvider: TokenProvider) {
     this.oauthService.configure(authConfig);
     this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
-        const token = this.oauthService.getAccessToken();
+        const token = this.oauthService.getIdToken();
         if (token) {
           this.tokenProvider.setToken(token); // ✅ Store token in TokenProvider
         }
@@ -38,7 +38,7 @@ export class AuthService {
   completeLogin() {
     this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
 
-      const token = this.oauthService.getAccessToken();
+      const token = this.oauthService.getIdToken();
 
       if (token) {
         this.tokenProvider.setToken(token);
