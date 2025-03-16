@@ -8,10 +8,11 @@
     ></app-order-form>
 
 
-        <!-- 🔹 Powiększony Przycisk "Złóż Zamówienie" -->
-        <button [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" class="w-full !text-lg p-4 !h-14" mat-raised-button color="primary" type="button">
-            ✅ Złóż zamówienie
-        </button>
+    <button  [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" type="button"
+    class="w-full max-w-md py-2 rounded-md mt-3 text-white font-bold transition
+    bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
+    ✅ Złóż zamówienie
+    </button>
         
 
   

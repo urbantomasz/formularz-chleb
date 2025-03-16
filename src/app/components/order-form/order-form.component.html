@@ -1,85 +1,91 @@
-<form class="bg-white p-4 space-y-4">
+<form class="bg-white space-y-1 p-4 py-4 max-w-md mx-auto">
+  <div></div>
   <!-- 🔹 Imię i Nazwisko -->
-  <mat-form-field appearance="outline" class="w-full">
-    <mat-label>Imię i Nazwisko</mat-label>
-    <input onlyLetters matInput [(ngModel)]="order.customerName" name="customerName" required>
-    <mat-error *ngIf="showValidationErrors && !order.customerName">To pole jest wymagane.</mat-error>
-  </mat-form-field>
+  <label for="name" class="block font-bold">👤 Imię i Nazwisko: <span class="text-red-500">*</span></label>
+  <input #nameInput="ngModel" type="text" id="name" name="name" [(ngModel)]="order.customerName" required
+         class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-2 focus:ring-green-300 "
+         [ngClass]="{'border-red-500': nameInput.touched && nameInput.invalid}"
+         >
+
+  <p *ngIf="nameInput.touched && nameInput.invalid" class="text-red-500 text-xs mt-1">
+    To pole jest wymagane.
+  </p>
 
 <!-- 🔹 Telefon -->
-<mat-form-field appearance="outline" class="w-full">
-    <mat-label>📞 Telefon:</mat-label>
-    <span matTextPrefix>+48 &nbsp;</span>
-    <input  onlyDigits
-    matInput 
-    [(ngModel)]="order.phone" 
-    name="phone"
-    placeholder="123456789"
-    minlength="9"maxlength="9"
-    pattern="[0-9]*"
-    required
-    type="tel">
-    <mat-error *ngIf="showValidationErrors && (order.phone?.toString()?.length || 0) < 9">
+<label for="phone" class="block font-bold mt-3">📞 Telefon: <span class="text-red-500">*</span></label>
+
+<div class="relative w-full">
+  <span class="absolute inset-y-0 left-4 flex items-center text-gray-500  h-full">+48</span>
+  <input #phoneInput="ngModel" matInput onlyDigits type="tel"   pattern="[0-9]*" id="phone" name="phone" [(ngModel)]="order.phone" 
+         class="w-full pl-12 border border-gray-300 rounded-md py-2  focus:ring-2 focus:ring-green-300 h-10"
+         minlength="9" maxlength="9" required
+         [ngClass]="{'border-red-500': phoneInput.touched && phoneInput.invalid}"
+         >
+</div>
+
+
+
+  <p *ngIf="phoneInput.touched && phoneInput.invalid && (order.phone?.toString()?.length || 0) < 9" class="text-red-500 text-xs mt-1">
     Numer telefonu musi mieć 9 cyfr.
-    </mat-error>
-</mat-form-field>
+  </p>
 
   <!-- 🔹 Wybór daty dostawy -->
-  <mat-form-field appearance="outline" class="w-full">
-    <mat-label>📅 Dzień dostawy</mat-label>
-    <mat-select [(ngModel)]="order.orderDate" name="orderDate">
-      <mat-option  *ngFor="let date of availableDates" [value]="date.value">
-        {{ date.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <label class="block font-bold mt-3">📅 Dzień dostawy: <span class="text-red-500">*</span></label>
+  <div class="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-green-300">
+    <div class="space-y-2">
+      <div *ngFor="let date of availableDates" class="flex items-center">
+        <input type="radio" [id]="date.value" name="orderDate" [(ngModel)]="order.orderDate" [value]="date.value">
+        <label [for]="date.value" class="ml-2 ">{{ date.label }}</label>
+      </div>
+    </div>
+  </div>
 
   <!-- 🔹 Uwagi -->
-  <mat-form-field appearance="outline" class="w-full">
-    <mat-label>Uwagi</mat-label>
-    <textarea name="note"[(ngModel)]="order.note" maxlength="200" matInput></textarea>
-  </mat-form-field>
+  <label for="note" class="block font-bold  mt-3">Uwagi:</label>
+  <textarea id="note" name="note" [(ngModel)]="order.note" maxlength="200"
+            class="w-full border border-gray-300 rounded-md p-2 mt-1  focus:ring-2 focus:ring-green-300"></textarea>
 
-    
-  <h3 *ngIf="order.items.length > 0" class="font-bold text-lg">🥖 Zamawiane chleby:</h3>
-    <!-- 🔹 Chleby -->
-    <div *ngFor="let bread of order.items; let i = index" class="flex items-center justify-between border border-gray-300 rounded-lg p-3 shadow-sm bg-gray-100">
+  <!-- 🔹 Zamawiane chleby -->
+  <h3 *ngIf="order.items.length > 0" class="font-bold  mt-3">🥖 Zamawiane chleby: <span class="text-red-500">*</span></h3> 
+  <div *ngFor="let bread of order.items; let i = index"
+       class="flex items-center justify-between gap-3 p-2 bg-gray-100 rounded-lg shadow-sm">
 
-        <!-- Wybór chleba -->
-        <mat-form-field  subscriptSizing="dynamic" appearance="outline" class="custom-select w-1/2">
-            <mat-label>Wybrany Chleb</mat-label>
-            <mat-select appearance="outline" [(ngModel)]="bread.breadId" name="bread{{i}}" (selectionChange)="onBreadSelectionChange(i, $event.value)">
-                <mat-option *ngFor="let b of availableBreads" [value]="b.breadId" [disabled]="b.disabled">
-                    {{ b.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    
-        <!-- Ilość chleba -->
-        <div class="flex items-center justify-center space-x-2">
-            <button type="button" mat-mini-fab  (click)="decreaseQuantity(i)" [disabled]="bread.quantity <= 1" class="flex items-center justify-center">
-                <mat-icon>remove</mat-icon>
-            </button>
-            <span class="text-lg font-bold w-6 text-center">{{ bread.quantity }}</span>
-            <button type="button" mat-mini-fab (click)="increaseQuantity(i)" [disabled]="bread.quantity >= 10" class="flex items-center justify-center">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
-    
-        <!-- Usuń chleb -->
-        <button mat-raised-button color="warn" (click)="removeBreadChoice(i)" class="flex items-center justify-center !bg-red-500 !text-white">
-            Usuń
-        </button>
-    
-    </div>
+    <!-- Wybór chleba -->
+    <select [(ngModel)]="bread.breadId" [name]="'bread' + i"
+            class="w-2/3 p-2 bg-white border rounded-md focus:ring-2 focus:ring-green-300 text-sm">
+      <option *ngFor="let b of availableBreads" [value]="b.breadId" [disabled]="b.disabled">
+        {{ b.name }}
+      </option>
+    </select>
+
+    <!-- Ilość chleba -->
+
+      <button type="button" (click)="decreaseQuantity(i)" [disabled]="bread.quantity <= 1"
+              class=" text-white px-3 py-1 bg-red-500  rounded-md hover:bg-red-600 disabled:opacity-50">
+        -
+      </button>
+      <span class="text-black  font-bold text-center">{{ bread.quantity }}</span>
+      <button type="button" (click)="increaseQuantity(i)" [disabled]="bread.quantity >= 30"
+              class=" text-white px-3 py-1 bg-green-500  rounded-md hover:bg-green-600 disabled:opacity-50">
+        +
+      </button>
     
 
-    <!-- 🔹 Powiększony Przycisk "Dodaj Chleb" -->
-    <button class="w-full !text-lg p-4 !h-14 !bg-green-400 !text-white" mat-raised-button color="primary" type="button" (click)="addBreadChoice()">
-        🍞 Dodaj kolejny chleb
+    <!-- Usuń chleb -->
+    <button type="button" (click)="removeBreadChoice(i)"
+            class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">
+       Usuń
     </button>
 
-    <mat-error *ngIf="showValidationErrors && order.items.length === 0">
-        Musisz dodać co najmniej jeden chleb
-    </mat-error>
+  </div>
+
+  <!-- 🔹 Powiększony Przycisk "Dodaj Chleb" -->
+  <button type="button" (click)="addBreadChoice()"
+          class="w-full bg-green-500 font-bold text-white py-2 rounded-md mt-4 hover:bg-green-600">
+    🍞 Dodaj kolejny chleb
+  </button>
+
+  <p *ngIf="order.items.length === 0" class="text-red-500 text-xs mt-1">
+    Musisz dodać co najmniej jeden chleb.
+  </p>
 </form>

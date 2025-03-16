@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../services/order.service';
 import { BreadService } from '../../services/bread.service';
@@ -11,10 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
-import { MatDialog } from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { OnlyDigitsDirective } from '../directives/only-digits.directive';
-import { OnlyLettersDirective } from '../directives/only-letters.directive';
 import { Bread } from '../../models/bread';
 import { Order } from '../../models/order';
 import { OrderItem } from '../../models/order-item';
@@ -22,10 +19,10 @@ import { OrderItem } from '../../models/order-item';
 @Component({
   selector: 'app-order-form',
   standalone: true,
-  imports: [CommonModule, OnlyDigitsDirective, OnlyLettersDirective, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCardModule, MatIconModule, MatDividerModule],
   templateUrl: './order-form.component.html',
-  styleUrl: './order-form.component.css'
+  styleUrl: './order-form.component.css',
 })
 export class OrderFormComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
@@ -92,7 +89,7 @@ export class OrderFormComponent implements OnChanges {
   }
 
   increaseQuantity(index: number) {
-    if (this.order.items[index].quantity < 10) {
+    if (this.order.items[index].quantity < 30) {
       this.order.items[index].quantity++;
     }
   }
