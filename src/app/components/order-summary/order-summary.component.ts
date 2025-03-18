@@ -62,6 +62,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     this.orderService.getOrders().subscribe({
       next: (data) => {
         this.allOrders = data.orders;
+        console.log('daty: ' +  data.dates);
         this.availableDates = data.dates;
         this.filterOrders();
       },

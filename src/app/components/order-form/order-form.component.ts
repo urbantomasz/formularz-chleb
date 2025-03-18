@@ -34,15 +34,10 @@ export class OrderFormComponent implements OnChanges {
   availableBreads: Bread[] = [];
   showValidationErrors = true;
 
- 
-
-  
   formatDate(date: Date): string {
     return date.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
   
-
-
   getNextWeekday(currentDate: Date, targetDay: number): Date {
     const date = new Date(currentDate);
     const diff = (targetDay + 7 - date.getDay()) % 7 || 7;

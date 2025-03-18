@@ -13,7 +13,7 @@
     bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
     ✅ Złóż zamówienie
     </button>
-        
+</div>      
 
   
 <!-- 🔹 Success/Error Messages -->
@@ -43,6 +43,6 @@
 </div>
 
   <!-- 🔹 Full Page Loading Spinner -->
-<div *ngIf="isSubmitting" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+<div *ngIf="isSubmitting" class="fixed inset-0  bg-gray-200/50 flex items-center justify-center z-50">
     <mat-progress-spinner mode="indeterminate" diameter="64" color="accent"></mat-progress-spinner>
   </div>

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Order } from '../models/order';
 import { OrderDto } from '../models/order-dto';
@@ -16,8 +16,14 @@ export class OrderService {
   http = inject(HttpClient)
 
   getOrders(): Observable<OrderDataDto> {
-    return this.http.get<OrderDataDto>(`${this.apiUrl}`);
+    return this.http.get<OrderDataDto>(`${this.apiUrl}`).pipe(
+      map(response => ({
+        ...response,
+        dates: response.dates.map(dateStr => new Date(dateStr)) // ✅ Convert strings to Date objects
+      }))
+    );
   }
+  
 
   getOrdersReport(date: Date): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/report/${date}`);
