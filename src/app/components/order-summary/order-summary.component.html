@@ -9,7 +9,7 @@
     <!-- Wybór daty -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>📅 Wybierz dzień dostawy</mat-label>
-      <mat-select [(ngModel)]="selectedDate" (selectionChange)="filterOrders()">
+      <mat-select [(ngModel)]="selectedDate" (selectionChange)="filterOrders()" canSelectNullableOptions>
         <mat-option [value]="undefined">Wszystkie zamówienia</mat-option>
         <mat-option *ngFor="let date of availableDates" [value]="date">
           {{ date | formatDate }}

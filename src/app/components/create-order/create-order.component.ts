@@ -65,6 +65,12 @@ export class CreateOrderComponent implements OnInit {
     }
   }
 
+  resetForm() {
+    this.orderSubmitted = false;
+    this.submissionSuccess = false;
+    this.orderForm.resetForm();
+  }
+
   setAvailableDates() {
     const today = new Date();
     const nextTuesday = this.getNextWeekday(today, 2);

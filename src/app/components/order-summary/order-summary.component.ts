@@ -61,6 +61,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   loadOrders() {
     this.orderService.getOrders().subscribe({
       next: (data) => {
+        console.log(data);
         this.allOrders = data.orders;
         console.log('daty: ' +  data.dates);
         this.availableDates = data.dates;
@@ -80,7 +81,11 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   }
 
 
-  generateExcelReport(date?: Date) {
+  generateExcelReport(date?: Date | null) {
+
+    if (!date) {
+      return alert('❌ Wybierz datę!');
+    }
 
     this.orderService.getOrdersReportExcel(date).subscribe({
       next: (blob) => {

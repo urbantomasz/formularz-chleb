@@ -107,6 +107,7 @@ export class OrderFormComponent implements OnChanges {
       customerName: '',
       phone: undefined,
       orderDate: this.availableDates[0].value,
+      note: undefined,
       items: []
     };
     this.showValidationErrors = false;

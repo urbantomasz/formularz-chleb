@@ -1,4 +1,4 @@
-<div *ngIf="!orderSubmitted" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+<div [hidden]="orderSubmitted" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5 flex flex-col items-center justify-center">
     <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
 
     <app-order-form
@@ -39,6 +39,11 @@
   <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
     📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
   </div>
+
+  <button (click)="resetForm()" type="button"
+  class="mt-4 px-6 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 transition font-bold">
+🔄 Zamów ponownie
+</button>
 
 </div>
 

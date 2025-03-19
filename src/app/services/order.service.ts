@@ -26,11 +26,11 @@ export class OrderService {
   
 
   getOrdersReport(date: Date): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/report/${date}`);
+    return this.http.get<any>(`${this.apiUrl}/report/${date.toDateString()}`);
   }
 
-  getOrdersReportExcel(date?: Date): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/report/excel/${date}`, { responseType: 'blob' });
+  getOrdersReportExcel(date: Date): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/report/excel/${date.toDateString()}`, { responseType: 'blob' });
   }
   
   submitOrder(order: Order): Observable<any> {
