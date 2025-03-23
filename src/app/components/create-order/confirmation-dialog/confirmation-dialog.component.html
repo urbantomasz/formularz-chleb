@@ -12,7 +12,7 @@
       </p>
       <p class="flex items-center">
         <!-- <mat-icon class="text-blue-500 mr-2">calendar_today</mat-icon> -->
-        <strong>Data dostawy:&nbsp;</strong> {{ data.order.orderDate | date: 'EEEE, dd.MM.yyyy' }}
+        <strong>Data dostawy:&nbsp;</strong> {{ data.order.orderDate! | formatDate}}
       </p>
     </div>
   <br>
@@ -23,7 +23,7 @@
   
     <ul class="text-left mt-2 space-y-1">
       <li *ngFor="let bread of data.order.items" class="flex items-center">
-        🍞 <span class="ml-2">{{ bread.name }} - <strong>{{ bread.quantity }} szt.</strong></span>
+        🍞 <span class="ml-2">{{ getBreadName(bread.breadId) }} - <strong>{{ bread.quantity }} szt.</strong></span>
       </li>
     </ul>
   </mat-dialog-content>

@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { OrderService } from '../../services/order.service';
-import { AvailableDate, mapDatesToObjects } from '../../utils/date-utils';
 
 @Component({
   selector: 'app-order-edit',
@@ -16,30 +15,24 @@ import { AvailableDate, mapDatesToObjects } from '../../utils/date-utils';
   templateUrl: './order-edit.component.html',
   styleUrl: './order-edit.component.css'
 })
-export class OrderEditComponent implements OnInit {
+export class OrderEditComponent  {
   @ViewChild(OrderFormComponent) orderForm!: OrderFormComponent;
   order: Order;
-  availableBreads: Bread[] = [];
-  availableDates: AvailableDate[] = [];
+  breadTypes: Bread[] = [];
+  availableDates: Date[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<OrderEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { order: Order, breads: Bread[], dates: Date[] },
     private orderService: OrderService
   ) {
-    this.order = { ...data.order }; // Clone to avoid modifying the original before saving
-    this.availableBreads = data.breads;
-    this.availableDates = mapDatesToObjects(data.dates);
-  }
-
-  ngOnInit() {
-    console.log("Editing order:", this.order);
-    console.log(this.availableDates);
-    console.log(this.availableBreads);
+    this.order = data.order;
+    this.breadTypes = data.breads;
+    this.availableDates = data.dates;
   }
 
   saveChanges() {
-    if (!this.orderForm.isFormValid()) return;
+    if (!this.orderForm?.isFormValid()) return;
 
     this.orderService.updateOrder(this.order.orderId as number, this.order).subscribe({
       next: () => {

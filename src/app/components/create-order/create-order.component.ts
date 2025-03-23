@@ -20,6 +20,7 @@ import { Bread } from '../../models/bread';
 import { Order } from '../../models/order';
 import { OrderItem } from '../../models/order-item';
 import { OrderFormComponent } from '../order-form/order-form.component';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-create-order',
@@ -41,7 +42,7 @@ export class CreateOrderComponent implements OnInit {
   @ViewChild(OrderFormComponent) orderForm!: OrderFormComponent; 
   
   breadTypes: Bread[] = [];  
-  availableDates: { label: string; value: Date }[] = [];
+  availableDates: Date[] = [];
   showValidationErrors = true;
   isSubmitting = false;
   orderSubmitted = false;
@@ -49,13 +50,24 @@ export class CreateOrderComponent implements OnInit {
 
   private orderService = inject(OrderService);
   private breadService = inject(BreadService);
+  private dateService = inject(DateService);
   private dialog = inject(MatDialog);
   private router = inject(Router);
 
   ngOnInit() {
-    //this.redirectIfNotMonday();
-    this.setAvailableDates();
     this.loadBreads();
+    this.loadDates();
+  }
+  loadDates() {
+    this.dateService.getUpcomingDates().subscribe({
+      next: (data) => {
+        console.log('dates: ', data)
+        this.availableDates = data;
+        console.log('dates after conversion:', this.availableDates)
+        this.order.orderDate = this.availableDates[0];
+      },
+      error: () => alert('❌ Nie udało się pobrać listy chlebów!')
+    });
   }
 
   redirectIfNotMonday() {
@@ -69,32 +81,6 @@ export class CreateOrderComponent implements OnInit {
     this.orderSubmitted = false;
     this.submissionSuccess = false;
     this.orderForm.resetForm();
-  }
-
-  setAvailableDates() {
-    const today = new Date();
-    const nextTuesday = this.getNextWeekday(today, 2);
-    const nextWednesday = this.getNextWeekday(today, 3);
-    const nextThursday = this.getNextWeekday(today, 4);
-  
-    this.availableDates = [
-      { label: `Wtorek (${this.formatDate(nextTuesday)})`, value: nextTuesday },
-      { label: `Środa (${this.formatDate(nextWednesday)})`, value: nextWednesday },
-      { label: `Czwartek (${this.formatDate(nextThursday)})`, value: nextThursday }
-    ];
-  
-    this.order.orderDate = this.availableDates[0].value; // Default selection
-  }
-  
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  }
-  
-  getNextWeekday(currentDate: Date, targetDay: number): Date {
-    const date = new Date(currentDate);
-    const diff = (targetDay + 7 - date.getDay()) % 7 || 7;
-    date.setDate(date.getDate() + diff);
-    return date;
   }
 
   loadBreads() {
@@ -136,7 +122,7 @@ export class CreateOrderComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
-      data: { order: this.order }
+      data: { order: this.order, breads: this.breadTypes }
     });
 
     dialogRef.afterClosed().subscribe(result => {

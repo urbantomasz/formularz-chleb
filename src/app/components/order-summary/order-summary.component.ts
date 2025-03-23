@@ -57,13 +57,18 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     this.dataSource.paginator = this.paginator;  
   }
 
+  
+  getBreadName(breadId: number): string {
+    const bread = this.breadTypes.find(b => b.breadId === breadId);
+    return bread ? bread.shortName : 'Nieznany chleb'; 
+  }
+
 
   loadOrders() {
     this.orderService.getOrders().subscribe({
       next: (data) => {
-        console.log(data);
+        console.log('orders: ', data);
         this.allOrders = data.orders;
-        console.log('daty: ' +  data.dates);
         this.availableDates = data.dates;
         this.filterOrders();
       },
@@ -134,10 +139,13 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   
 
   openEditDialog(order: Order) {
+
+    let orderCopy = {...order};
+
     const dialogRef = this.dialog.open(OrderEditComponent, {
       width: '600px',
       data: {
-        order: order,
+        order: orderCopy,
         breads: this.breadTypes,
         dates: this.availableDates
       }

@@ -15,56 +15,49 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { Bread } from '../../models/bread';
 import { Order } from '../../models/order';
 import { OrderItem } from '../../models/order-item';
+import { FormatDatePipe } from "../../pipes/format-date.pipe";
 
 @Component({
   selector: 'app-order-form',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCardModule, MatIconModule, MatDividerModule],
+    MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCardModule, MatIconModule, MatDividerModule, FormatDatePipe],
   templateUrl: './order-form.component.html',
   styleUrl: './order-form.component.css',
 })
-export class OrderFormComponent implements OnChanges {
-  ngOnChanges(changes: SimpleChanges): void {
+export class OrderFormComponent implements OnInit{
+  ngOnInit(): void {
     this.loadBreads();
   }
   @Input() order!: Order;
   @Input() breadTypes: Bread[] = [];  
-  @Input() availableDates: { label: string; value: Date }[] = [];
+  @Input() availableDates: Date[] = [];
   availableBreads: Bread[] = [];
   showValidationErrors = true;
 
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  }
-  
-  getNextWeekday(currentDate: Date, targetDay: number): Date {
-    const date = new Date(currentDate);
-    const diff = (targetDay + 7 - date.getDay()) % 7 || 7;
-    date.setDate(date.getDate() + diff);
-    return date;
-  }
-
   updateAvailableBreads() {
-    // Get selected bread IDs
-    const selectedBreadIds = this.order.items.map(b => b.breadId);
-  
+    // Get selected bread IDs, excluding the current item being edited
+    const selectedBreadIds = this.order.items.map(b => Number(b.breadId));
+
     // Update availableBreads but DO NOT REMOVE items, just mark them as disabled
     this.availableBreads = this.breadTypes.map(bread => ({
       ...bread,
-      disabled: selectedBreadIds.includes(bread.breadId) // ✅ Mark as disabled
+      disabled: selectedBreadIds.includes(bread.breadId)
     }));
   }
-  
-  onBreadSelectionChange(index: number, newBreadId: number) {
-    this.updateAvailableBreads();
+
+  trackById(index: number, obj: any): any {
+    return index;
   }
-  
+    
   loadBreads() {
-        this.updateAvailableBreads();
-        if(this.order.items.length === 0){
-          this.addBreadChoice();
-        }
+    this.updateAvailableBreads();
+    if(this.order.items.length === 0){
+      this.addBreadChoice();
+    }
+    console.log(this.order);
+    console.log(this.breadTypes);
+    console.log(this.availableDates);
   }
 
   addBreadChoice() {
@@ -72,14 +65,22 @@ export class OrderFormComponent implements OnChanges {
     if (!firstAvailable) return;
 
     // Select the first available bread that isn't already chosen
-    const newBread: OrderItem = { breadId: firstAvailable.breadId, name: firstAvailable.name, quantity: 1 };
-    this.order.items.push(newBread);
+    const newBread: OrderItem = { 
+      breadId: firstAvailable.breadId, 
+      quantity: 1 
+    };
+    
+    // Dodaj nowy chleb do listy
+    this.order.items = [...this.order.items, newBread];
     this.updateAvailableBreads();
+    console.log(this.order);
+    console.log(this.breadTypes);
+    console.log(this.availableDates);
   }
 
-
   removeBreadChoice(index: number) {
-    this.order.items.splice(index, 1);
+    // Usuń chleb z listy używając spread operatora
+    this.order.items = this.order.items.filter((_, i) => i !== index);
     this.updateAvailableBreads();
   }
 
@@ -106,7 +107,7 @@ export class OrderFormComponent implements OnChanges {
     this.order = {
       customerName: '',
       phone: undefined,
-      orderDate: this.availableDates[0].value,
+      orderDate: this.availableDates[0],
       note: undefined,
       items: []
     };

@@ -24,6 +24,7 @@ export class AuthGuard implements CanActivate {
 
     // Check if user is in the allowed list
     if (!userEmail || !this.allowedEmails.includes(userEmail)) {
+      this.authService.logout();
       this.router.navigate(['/chleb/formularz']); 
       return false;
     }

@@ -48,7 +48,7 @@
       <mat-header-cell *matHeaderCellDef> Zamówienie </mat-header-cell>
       <mat-cell *matCellDef="let order">
         <ul class="list-disc text-left pl-5 text-xs">
-          <li *ngFor="let item of order.items"> {{ item.breadName }} - {{ item.quantity }} szt.</li>
+          <li *ngFor="let item of order.items"> {{ getBreadName(item.breadId) }} - {{ item.quantity }} szt.</li>
         </ul>
       </mat-cell>
     </ng-container>

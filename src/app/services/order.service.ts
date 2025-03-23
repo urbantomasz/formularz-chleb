@@ -19,10 +19,15 @@ export class OrderService {
     return this.http.get<OrderDataDto>(`${this.apiUrl}`).pipe(
       map(response => ({
         ...response,
-        dates: response.dates.map(dateStr => new Date(dateStr)) // ✅ Convert strings to Date objects
+        orders: response.orders.map(order => ({
+          ...order,
+          orderDate: new Date(order.orderDate) // Zakładając, że orderDate jest stringiem
+        })),
+        dates: response.dates.map(dateStr => new Date(dateStr))
       }))
     );
   }
+  
   
 
   getOrdersReport(date: Date): Observable<any> {

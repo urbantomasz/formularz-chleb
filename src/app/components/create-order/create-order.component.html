@@ -1,15 +1,17 @@
 <div [hidden]="orderSubmitted" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5 flex flex-col items-center justify-center">
     <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
 
-    <app-order-form
+    <app-order-form 
+    *ngIf="order && breadTypes.length > 0 && availableDates.length > 0"
+    class="w-full"
     [availableDates]="availableDates"
     [breadTypes]="breadTypes"
-    [order]="order"
-    ></app-order-form>
+    [order]="order">
+  </app-order-form>
 
 
     <button  [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" type="button"
-    class="w-full max-w-md py-2 rounded-md mt-3 text-white font-bold transition
+    class="w-full py-2 rounded-md mt-3 text-white font-bold transition
     bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
     ✅ Złóż zamówienie
     </button>
