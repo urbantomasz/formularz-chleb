@@ -49,7 +49,13 @@ export class OrderFormComponent implements OnInit{
   trackById(index: number, obj: any): any {
     return index;
   }
-    
+
+  isDateSelected(date: Date): boolean {
+    if (!this.order.orderDate || !date) return false;    
+    return this.order.orderDate.toDateString() === date.toDateString();
+  }
+
+
   loadBreads() {
     this.updateAvailableBreads();
     if(this.order.items.length === 0){

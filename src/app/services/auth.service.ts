@@ -14,6 +14,8 @@ export class AuthService {
         if (token) {
           this.tokenProvider.setToken(token); // ✅ Store token in TokenProvider
         }
+
+        this.oauthService.setupAutomaticSilentRefresh();
       });
   }
 

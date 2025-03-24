@@ -33,7 +33,12 @@
   <div class="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-green-300">
     <div class="space-y-2">
       <div *ngFor="let date of availableDates" class="flex items-center">
-        <input type="radio" id="{{ date }}" [(ngModel)]="order.orderDate" [value]="date" name="orderDate">
+        <!-- <input type="radio" id="{{ date }}" [(ngModel)]="order.orderDate" [value]="date" name="orderDate"> -->
+        <input type="radio" 
+        [id]="date" 
+        name="orderDate" 
+        [checked]="isDateSelected(date)"
+        [value]="date">
         <label [for]="date" class="ml-2">{{ date | formatDate }}</label>
       </div>
     </div>
