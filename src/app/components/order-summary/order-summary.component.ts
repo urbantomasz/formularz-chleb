@@ -21,6 +21,7 @@ import { BreadService } from '../../services/bread.service';
 import { Bread } from '../../models/bread';
 import { FormatDateTimePipe } from "../../pipes/format-datetime.pipe";
 import { forkJoin } from 'rxjs';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-order-summary',
@@ -28,7 +29,7 @@ import { forkJoin } from 'rxjs';
   imports: [
     CommonModule, FormsModule, MatTableModule, MatButtonModule, MatSelectModule, MatCardModule, MatFormFieldModule,
     FormatDatePipe, MatPaginatorModule, MatIconModule,
-    FormatDateTimePipe
+    FormatDateTimePipe, MatTabsModule,
 ],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.css'
@@ -47,7 +48,16 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   private orderService = inject(OrderService);
   private breadService = inject(BreadService);
   private dialog = inject(MatDialog);
+ selectedTabIndex = 0;
 
+  onTabChange(index: number) {
+    if (index === 0) {
+      this.selectedDate = undefined;
+    } else {
+      this.selectedDate = this.availableDates[index - 1];
+    }
+    this.filterOrders();
+  }
  
 ngOnInit() {
   forkJoin({

@@ -1,6 +1,5 @@
 <div class="max-w-screen-xl mx-auto p-6 rounded-lg shadow-md mt-5">
 
-       
   <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
     <h2 class="text-2xl font-bold flex items-center gap-2">
       📋 <span>Aktualne Zamówienia</span>
@@ -14,38 +13,64 @@
       📆 <mat-icon class="mr-2">description</mat-icon> Pobierz raport {{ selectedDate | formatDate }}
     </button>
   </div>
-  <div class="overflow-x-auto"></div>
-  <div class="flex flex-col md:flex-row items-center gap-4">
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>📅 Wybierz dzień dostawy</mat-label>
-      <mat-select [(ngModel)]="selectedDate" (selectionChange)="filterOrders()" canSelectNullableOptions>
-        <mat-option [value]="undefined">Wszystkie zamówienia</mat-option>
-        <mat-option *ngFor="let date of availableDates" [value]="date">
-          {{ date | formatDate }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+
+  <!-- 🔄 Tabs for date selection -->
+  <mat-tab-group
+  [(selectedIndex)]="selectedTabIndex"
+  (selectedIndexChange)="onTabChange($event)"
+  class="border border-gray-200 mt-4"
+>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <span
+        class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
+        [ngClass]="{
+          'bg-white border border-gray-300 border-b-0 shadow-sm': selectedTabIndex === 0,
+          'text-gray-600 hover:bg-gray-100': selectedTabIndex !== 0
+        }"
+      >
+        📦 Wszystkie
+      </span>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab
+    *ngFor="let date of availableDates; let i = index"
+  >
+    <ng-template mat-tab-label>
+      <span
+        class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
+        [ngClass]="{
+          'bg-white border border-gray-300 border-b-0 shadow-sm': selectedTabIndex === i + 1,
+          'text-gray-600 hover:bg-gray-100': selectedTabIndex !== i + 1
+        }"
+      >
+        📅 {{ date | formatDate }}
+      </span>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+
+  <!-- 🥖 Bread summary shown only when there are orders -->
+  <div *ngIf="breadSummaryArray.length" class="hidden md:flex flex flex-wrap justify-between items-center gap-2 my-4">
+    <div *ngFor="let bread of breadSummaryArray" class="flex-1 min-w-[100px] bg-white rounded shadow p-2 text-center">
+      <h4 class="font-semibold text-xs mb-1 truncate">{{ bread.name }}</h4>
+      <span class="font-bold">{{bread.quantity}}</span>
+    </div>
   </div>
 
-<div *ngIf="breadSummaryArray.length" class="hidden md:flex flex flex-wrap justify-between items-center gap-2 my-4">
-  <div *ngFor="let bread of breadSummaryArray" class="flex-1 min-w-[100px] bg-white rounded shadow p-2 text-center">
-    <h4 class="font-semibold text-xs mb-1 truncate">{{ bread.name }}</h4>
-    <span class="font-bold">{{bread.quantity}}</span>
-  </div>
-</div>
-
-   
+  <!-- 📋 Orders Table -->
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
     <ng-container matColumnDef="customerName">
       <mat-header-cell *matHeaderCellDef> 👤 Klient </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.customerName }} </mat-cell>
     </ng-container>
-  
+
     <ng-container matColumnDef="phone">
       <mat-header-cell *matHeaderCellDef> 📞 Telefon </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.phone }} </mat-cell>
     </ng-container>
-  
+
     <ng-container matColumnDef="orderDate">
       <mat-header-cell *matHeaderCellDef> 📅 Dostawa </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.orderDate | formatDate }} </mat-cell>
@@ -55,8 +80,7 @@
       <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> 🕓 Złożone </mat-header-cell>
       <mat-cell *matCellDef="let order" class="hidden! md:table-cell!"> {{ order.createdAt | formatDateTime }} </mat-cell>
     </ng-container>
-  
-    <!-- ✅ Zwiększona szerokość dla "Chleby" -->
+
     <ng-container matColumnDef="breads">
       <mat-header-cell *matHeaderCellDef> 🥖 Zamówienie </mat-header-cell>
       <mat-cell *matCellDef="let order">
@@ -65,37 +89,28 @@
         </ul>
       </mat-cell>
     </ng-container>
-  
-    <!-- ✅ Zwiększona szerokość dla "Uwagi" -->
+
     <ng-container matColumnDef="note">
       <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> 📝 Uwagi </mat-header-cell>
-      <mat-cell *matCellDef="let order"  class="note-cell hidden! md:table-cell!"> 
-        <span class="note-text">
-          {{ order.note }}
-        </span>
+      <mat-cell *matCellDef="let order" class="note-cell hidden! md:table-cell!"> 
+        <span class="note-text">{{ order.note }}</span>
       </mat-cell>
     </ng-container>
-  
+
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> ⚙️ Akcje </mat-header-cell>
-      <mat-cell *matCellDef="let order"  class="flex justify-center items-center hidden! md:table-cell!">
-        <button mat-button class="text-xs" (click)="openEditDialog(order)">
-          ✏️ Edytuj
-        </button>
-        <button mat-button color="warn" (click)="confirmDelete(order.orderId!)">
-          ❌ Usuń
-        </button>
+      <mat-cell *matCellDef="let order" class="flex justify-center items-center hidden! md:table-cell!">
+        <button mat-button class="text-xs bg-white border border-gray-300 border-b-0 shadow-sm mr-2" (click)="openEditDialog(order)">✏️ Edytuj</button>
+        <button mat-button color="warn" class="text-xs bg-white border border-gray-300 border-b-0 shadow-sm" (click)="confirmDelete(order.orderId!)">❌ Usuń</button>
       </mat-cell>
     </ng-container>
-  
+
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
-  
-  <!-- <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
 
-  <!-- 🔹 Brak zamówień -->
+  <!-- Empty State -->
   <ng-template #noOrders>
     <p class="mt-4 text-gray-600">Brak zamówień.</p>
   </ng-template>
-
+</div>
