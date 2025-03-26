@@ -19,13 +19,16 @@ import { Order } from '../../models/order';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 import { BreadService } from '../../services/bread.service';
 import { Bread } from '../../models/bread';
+import { FormatDateTimePipe } from "../../pipes/format-datetime.pipe";
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-order-summary',
   standalone: true,
   imports: [
     CommonModule, FormsModule, MatTableModule, MatButtonModule, MatSelectModule, MatCardModule, MatFormFieldModule,
-    FormatDatePipe, MatPaginatorModule, MatIconModule
+    FormatDatePipe, MatPaginatorModule, MatIconModule,
+    FormatDateTimePipe
 ],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.css'
@@ -37,7 +40,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   dataSource = new MatTableDataSource<OrderDto>([]);
   availableDates: Date[] = [];
   selectedDate?: Date = undefined;
-  displayedColumns: string[] = ['orderDate', 'customerName', 'phone', 'breads', 'note', 'actions'];
+  displayedColumns: string[] = ['createdAt','orderDate', 'customerName', 'phone', 'breads', 'note', 'actions'];
   breadSummaryArray: { name: string; quantity: number }[] = [];
   breadTypes: Bread[] = [];   
 
@@ -45,13 +48,22 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   private breadService = inject(BreadService);
   private dialog = inject(MatDialog);
 
-  ngOnInit() {
-    this.loadOrders();
-    this.breadService.getBreads().subscribe({
-      next: (data) =>{
-      this.breadTypes = data;
-    }})
-  }
+ 
+ngOnInit() {
+  forkJoin({
+    ordersData: this.orderService.getOrders(),
+    breads: this.breadService.getBreads()
+  }).subscribe({
+    next: ({ ordersData, breads }) => {
+      this.allOrders = ordersData.orders;
+      this.availableDates = ordersData.dates;
+      this.breadTypes = breads;
+
+      this.filterOrders(); 
+    },
+    error: () => alert('❌ Błąd ładowania danych!')
+  });
+}
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;  
@@ -80,12 +92,28 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     if (!this.selectedDate) {
       this.filteredOrders = [...this.allOrders]; // Jeśli brak filtra, wyświetl wszystkie zamówienia
     } else {
-      this.filteredOrders = this.allOrders.filter(order => order.orderDate === this.selectedDate);
+      this.filteredOrders = this.allOrders.filter(order => order.orderDate.getDate() === this.selectedDate?.getDate());
     }
     this.dataSource.data = this.filteredOrders;
+    this.updateBreadSummary();
   }
 
+  updateBreadSummary() {
+    const summaryMap: { [key: number]: number } = {};
+  
+    for (const order of this.filteredOrders) {
+      for (const item of order.items) {
+        summaryMap[item.breadId] = (summaryMap[item.breadId] || 0) + item.quantity;
+      }
+    }
+  
+    this.breadSummaryArray = this.breadTypes.map(b => ({
+      name: b.shortName,
+      quantity: summaryMap[b.breadId] || 0
+    }));
+  }
 
+  
   generateExcelReport(date?: Date | null) {
 
     if (!date) {

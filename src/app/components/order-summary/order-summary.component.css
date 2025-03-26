@@ -81,3 +81,17 @@ mat-table {
   text-align: center !important;   /* Center text */
   justify-content: center !important; /* Ensure flex elements are centered */
 }
+
+.note-cell {
+  padding: 8px;
+  vertical-align: top;
+}
+
+.note-text {
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  font-size: 0.75rem;
+  max-width: 100%;
+}

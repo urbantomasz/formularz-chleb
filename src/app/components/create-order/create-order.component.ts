@@ -76,6 +76,9 @@ export class CreateOrderComponent implements OnInit {
       this.router.navigate(['/summary']);
     }
   }
+  reloadView() {
+    window.location.reload();
+  }
 
   resetForm() {
     this.orderSubmitted = false;

@@ -55,6 +55,9 @@ export class OrderFormComponent implements OnInit{
     return this.order.orderDate.toDateString() === date.toDateString();
   }
 
+  setOrderDate(date: Date) {
+    this.order.orderDate = date;
+  }
 
   loadBreads() {
     this.updateAvailableBreads();

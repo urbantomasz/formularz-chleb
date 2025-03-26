@@ -1,12 +1,21 @@
-<div class="max-w-4xl mx-auto p-6 rounded-lg shadow-md mt-5">
+<div class="max-w-screen-xl mx-auto p-6 rounded-lg shadow-md mt-5">
 
        
-  <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Aktualne Zamówienia</h2>
+  <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      📋 <span>Aktualne Zamówienia</span>
+    </h2>
 
-
-
-  <div class="mt-4 flex items-center gap-4">
-    <!-- Wybór daty -->
+    <button *ngIf="selectedDate"
+            mat-stroked-button
+            color="primary"
+            class="whitespace-nowrap shadow-md rounded-full px-4 py-2"
+            (click)="generateExcelReport(selectedDate)">
+      📆 <mat-icon class="mr-2">description</mat-icon> Pobierz raport {{ selectedDate | formatDate }}
+    </button>
+  </div>
+  <div class="overflow-x-auto"></div>
+  <div class="flex flex-col md:flex-row items-center gap-4">
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>📅 Wybierz dzień dostawy</mat-label>
       <mat-select [(ngModel)]="selectedDate" (selectionChange)="filterOrders()" canSelectNullableOptions>
@@ -16,36 +25,40 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <button 
-    mat-raised-button 
-    color="accent" 
-    (click)="generateExcelReport(selectedDate)"
-  >
-    📆 Pobierz raport 
-  </button>
   </div>
 
+<div *ngIf="breadSummaryArray.length" class="hidden md:flex flex flex-wrap justify-between items-center gap-2 my-4">
+  <div *ngFor="let bread of breadSummaryArray" class="flex-1 min-w-[100px] bg-white rounded shadow p-2 text-center">
+    <h4 class="font-semibold text-xs mb-1 truncate">{{ bread.name }}</h4>
+    <span class="font-bold">{{bread.quantity}}</span>
+  </div>
+</div>
 
    
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
     <ng-container matColumnDef="customerName">
-      <mat-header-cell *matHeaderCellDef> Kto </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> 👤 Klient </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.customerName }} </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="phone">
-      <mat-header-cell *matHeaderCellDef> Telefon </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> 📞 Telefon </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.phone }} </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="orderDate">
-      <mat-header-cell *matHeaderCellDef> Kiedy</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> 📅 Dostawa </mat-header-cell>
       <mat-cell *matCellDef="let order"> {{ order.orderDate | formatDate }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> 🕓 Złożone </mat-header-cell>
+      <mat-cell *matCellDef="let order" class="hidden! md:table-cell!"> {{ order.createdAt | formatDateTime }} </mat-cell>
     </ng-container>
   
     <!-- ✅ Zwiększona szerokość dla "Chleby" -->
     <ng-container matColumnDef="breads">
-      <mat-header-cell *matHeaderCellDef> Zamówienie </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> 🥖 Zamówienie </mat-header-cell>
       <mat-cell *matCellDef="let order">
         <ul class="list-disc text-left pl-5 text-xs">
           <li *ngFor="let item of order.items"> {{ getBreadName(item.breadId) }} - {{ item.quantity }} szt.</li>
@@ -55,15 +68,17 @@
   
     <!-- ✅ Zwiększona szerokość dla "Uwagi" -->
     <ng-container matColumnDef="note">
-      <mat-header-cell *matHeaderCellDef> Uwagi </mat-header-cell>
-      <mat-cell *matCellDef="let order"> 
-        <span class="block whitespace-normal text-nowrap text-xs">{{ order.note }}</span>
+      <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> 📝 Uwagi </mat-header-cell>
+      <mat-cell *matCellDef="let order"  class="note-cell hidden! md:table-cell!"> 
+        <span class="note-text">
+          {{ order.note }}
+        </span>
       </mat-cell>
     </ng-container>
   
     <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef> Akcje </mat-header-cell>
-      <mat-cell *matCellDef="let order">
+      <mat-header-cell *matHeaderCellDef class="hidden! md:table-cell!"> ⚙️ Akcje </mat-header-cell>
+      <mat-cell *matCellDef="let order"  class="flex justify-center items-center hidden! md:table-cell!">
         <button mat-button class="text-xs" (click)="openEditDialog(order)">
           ✏️ Edytuj
         </button>

@@ -35,7 +35,7 @@ export class OrderService {
   }
 
   getOrdersReportExcel(date: Date): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/report/excel/${date.toDateString()}`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/report/excel/${date.toISOString()}`, { responseType: 'blob' });
   }
   
   submitOrder(order: Order): Observable<any> {

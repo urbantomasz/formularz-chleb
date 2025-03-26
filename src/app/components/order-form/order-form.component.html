@@ -38,7 +38,7 @@
         [id]="date" 
         name="orderDate" 
         [checked]="isDateSelected(date)"
-        [value]="date">
+        (change)="setOrderDate(date)">
         <label [for]="date" class="ml-2">{{ date | formatDate }}</label>
       </div>
     </div>

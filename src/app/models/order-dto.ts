@@ -5,6 +5,7 @@ export interface OrderDto {
     note: string;
     customerName: string;
     phone: number;
+    createdAt: Date;
     orderDate: Date;
     items: OrderItemDto[];
   }
