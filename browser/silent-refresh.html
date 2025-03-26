@@ -1,0 +1,12 @@
+<!-- /silent-refresh.html -->
+<!DOCTYPE html>
+<html>
+  <head><title>Refreshing...</title></head>
+  <body>
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        parent.postMessage(window.location.href, window.location.origin);
+      });
+    </script>
+  </body>
+</html>
