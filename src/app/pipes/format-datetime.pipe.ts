@@ -9,7 +9,6 @@ export class FormatDateTimePipe implements PipeTransform {
             locale: string = 'pl-PL', 
             timeZone: string = 'Europe/Warsaw',  // Defaulting to Warsaw, Poland time zone
             formatOptions: Intl.DateTimeFormatOptions = {
-                weekday: 'long',
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',

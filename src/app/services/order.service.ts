@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Order } from '../models/order';
 import { OrderDto } from '../models/order-dto';
-import { OrderDataDto } from '../models/order-data-dto';
+
 
 
 @Injectable({
@@ -15,21 +15,17 @@ export class OrderService {
 
   http = inject(HttpClient)
 
-  getOrders(): Observable<OrderDataDto> {
-    return this.http.get<OrderDataDto>(`${this.apiUrl}`).pipe(
-      map(response => ({
-        ...response,
-        orders: response.orders.map(order => ({
-          ...order,
-          orderDate: new Date(order.orderDate) // Zakładając, że orderDate jest stringiem
-        })),
-        dates: response.dates.map(dateStr => new Date(dateStr))
+  getOrders(): Observable<OrderDto[]> {
+    return this.http.get<OrderDto[]>(`${this.apiUrl}`).pipe(
+      map((orders) =>
+      orders.map((order) => ({
+        ...order,
+        orderDate: new Date(order.orderDate),
       }))
+      )
     );
   }
   
-  
-
   getOrdersReport(date: Date): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/report/${date.toDateString()}`);
   }

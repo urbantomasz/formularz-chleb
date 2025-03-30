@@ -22,6 +22,7 @@ import { Bread } from '../../models/bread';
 import { FormatDateTimePipe } from "../../pipes/format-datetime.pipe";
 import { forkJoin } from 'rxjs';
 import {MatTabsModule} from '@angular/material/tabs';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-order-summary',
@@ -47,6 +48,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
 
   private orderService = inject(OrderService);
   private breadService = inject(BreadService);
+  private deateService = inject(DateService);
   private dialog = inject(MatDialog);
  selectedTabIndex = 0;
 
@@ -59,21 +61,25 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     this.filterOrders();
   }
  
-ngOnInit() {
-  forkJoin({
-    ordersData: this.orderService.getOrders(),
-    breads: this.breadService.getBreads()
-  }).subscribe({
-    next: ({ ordersData, breads }) => {
-      this.allOrders = ordersData.orders;
-      this.availableDates = ordersData.dates;
-      this.breadTypes = breads;
-
-      this.filterOrders(); 
-    },
-    error: () => alert('❌ Błąd ładowania danych!')
-  });
-}
+  ngOnInit() {
+    forkJoin({
+      orders: this.orderService.getOrders(),
+      breads: this.breadService.getBreads(),
+      dates: this.deateService.getUpcomingDates()
+    }).subscribe({
+      next: ({ orders, breads, dates }) => {
+        console.log(orders);
+        this.allOrders = orders;
+        this.availableDates = dates;
+        this.breadTypes = breads;
+        this.filterOrders(); 
+      },
+      error: (error) => {
+        console.error('Error loading data', error);
+        alert('❌ Błąd ładowania danych!');
+      }
+    });
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;  
@@ -85,18 +91,6 @@ ngOnInit() {
     return bread ? bread.shortName : 'Nieznany chleb'; 
   }
 
-
-  loadOrders() {
-    this.orderService.getOrders().subscribe({
-      next: (data) => {
-        console.log('orders: ', data);
-        this.allOrders = data.orders;
-        this.availableDates = data.dates;
-        this.filterOrders();
-      },
-      error: () => alert('❌ Błąd pobierania zamówień!'),
-    });
-  }
 
   filterOrders() {
     if (!this.selectedDate) {
@@ -195,7 +189,7 @@ ngOnInit() {
         const index = this.allOrders.findIndex(o => o.orderId === result.orderId);
         if (index !== -1) {
           this.allOrders[index] = result;
-          this.dataSource.data = [...this.allOrders]; // Refresh the table
+          this.filterOrders();
         }
       }
     });
