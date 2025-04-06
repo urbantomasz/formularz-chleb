@@ -87,7 +87,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
 
   
   getBreadName(breadId: number): string {
-    const bread = this.breadTypes.find(b => b.breadId === breadId);
+    const bread = this.breadTypes.find(b => b.breadId === Number(breadId));
     return bread ? bread.shortName : 'Nieznany chleb'; 
   }
 

@@ -30,7 +30,7 @@ export class ConfirmationDialogComponent implements OnInit {
   }
 
   getBreadName(breadId: number): string {
-    const bread = this.data.breads.find(b => b.breadId === breadId);
+    const bread = this.data.breads.find(b => b.breadId === Number(breadId));
     return bread ? bread.name : 'Nieznany chleb'; 
   }
 }
