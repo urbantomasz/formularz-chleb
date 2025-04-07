@@ -25,6 +25,17 @@ export class OrderService {
       )
     );
   }
+
+  getOrdersByDate(date: Date): Observable<OrderDto[]> {
+    return this.http.get<OrderDto[]>(`${this.apiUrl}/date/${date.toDateString()}`).pipe(
+      map((orders) =>
+        orders.map((order) => ({
+          ...order,
+          orderDate: new Date(order.orderDate),
+        }))
+      )
+    );
+  }
   
   getOrdersReport(date: Date): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/report/${date.toDateString()}`);

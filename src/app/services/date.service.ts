@@ -25,4 +25,24 @@ export class DateService {
           )
         );
   }
+
+  getPastDates(): Observable<Date[]> {
+    return this.http.get<Date[]>(`${this.apiUrl}/past`).pipe(
+          map(response => 
+            response.map(dateStr => {
+              return new Date(dateStr)
+            }) // ✅ Convert strings to Date objects
+          )
+        );
+  }
+
+  getCurrentWeekDates(): Observable<Date[]> {
+    return this.http.get<Date[]>(`${this.apiUrl}/current`).pipe(
+          map(response => 
+            response.map(dateStr => {
+              return new Date(dateStr)
+            }) // ✅ Convert strings to Date objects
+          )
+        );
+  }
 }
