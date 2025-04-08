@@ -21,3 +21,10 @@
     -ms-filter: blur(0.5px);
     filter: blur(0.5px);
 }
+
+
+@media (max-width: 640px) {
+    .bg-honeycomb::before {
+        background-size: 10%; /* Zmniejsza rozmiar wzoru, ale nadal wypełnia całą przestrzeń */
+    }
+}

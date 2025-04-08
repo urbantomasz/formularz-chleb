@@ -1,0 +1,9 @@
+iframe {
+  width: 100%; /* Domyślnie pełna szerokość */
+}
+
+@media (min-width: 640px) {
+  iframe {
+    width: 500px; /* Na większych ekranach */
+  }
+}
