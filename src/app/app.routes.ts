@@ -7,11 +7,25 @@ import { OrderSummaryComponent } from './components/order-summary/order-summary.
 import { AuthGuard } from './guards/auth.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { CreateOrderComponent } from './components/create-order/create-order.component';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { OrderLayoutComponent } from './layouts/order-layout/order-layout.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'chleb/formularz', pathMatch: 'full' }, // Default route
-  { path: 'chleb/formularz', component: CreateOrderComponent },
-  { path: 'chleb/zamowienia', component: OrderSummaryComponent, canActivate: [AuthGuard] },
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      { path: '', redirectTo: 'chleb/formularz', pathMatch: 'full' },
+      { path: 'chleb/formularz', component: CreateOrderComponent },
+    ],
+  },
+  {
+    path: 'chleb/zamowienia',
+    component: OrderLayoutComponent,
+    children: [
+      { path: '', component: OrderSummaryComponent, canActivate: [AuthGuard] },
+    ],
+  },
   { path: 'auth-callback', component: AuthCallbackComponent },
   { path: '**', redirectTo: 'chleb/formularz', pathMatch: 'full' },
 ];

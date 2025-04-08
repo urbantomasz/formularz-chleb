@@ -1,0 +1,23 @@
+.bg-honeycomb{
+    overflow: auto;
+    position: relative;
+}
+
+.bg-honeycomb::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+
+    background-image: url("/honeycomb-svgrepo-com.svg");
+    background-position: center; /* Ustawia obraz na środku */
+    width: 100%;
+    height: 100%;
+    -webkit-filter: blur(0.5px);
+    -moz-filter: blur(0.5px);
+    -o-filter: blur(0.5px);
+    -ms-filter: blur(0.5px);
+    filter: blur(0.5px);
+}
