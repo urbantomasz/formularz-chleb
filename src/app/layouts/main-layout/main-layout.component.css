@@ -28,7 +28,6 @@
 .custom-form {
     background: linear-gradient(135deg, #ffffff, #f9fafb); /* Subtelny gradient */
     border: 1px solid #e5e7eb;
-    border-radius: 15px;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); /* Cień dla formularza */
 }
 
