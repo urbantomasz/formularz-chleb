@@ -52,6 +52,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   private dialog = inject(MatDialog);
   selectedTabIndex = 0;
   pastDates: Date[] = [];
+  upcomingDates: Date[] = [];
 
   onTabChange(index: number) {
     if (index === 0) {
@@ -66,14 +67,13 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     forkJoin({
       orders: this.orderService.getOrders(),
       breads: this.breadService.getBreads(),
-      dates: this.deateService.getCurrentWeekDates(),
-      pastDates: this.deateService.getPastDates(),
+      dates: this.deateService.getDistinctDates(),
+      upcomingDates: this.deateService.getUpcomingDates(),
     }).subscribe({
-      next: ({ orders, breads, dates, pastDates }) => {
-        console.log(orders);
+      next: ({ orders, breads, dates, upcomingDates }) => {
+        this.upcomingDates = upcomingDates;
         this.allOrders = orders;
         this.availableDates = dates;
-        this.pastDates = pastDates;
         this.breadTypes = breads;
         this.filterOrders(); 
       },

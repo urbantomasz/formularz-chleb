@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Bread } from '../models/bread';
 
@@ -45,4 +45,23 @@ export class DateService {
           )
         );
   }
+
+  getDistinctDates(): Observable<Date[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/current`).pipe(
+      map(currentDates => currentDates.concat([])), // Pobierz current dates
+      switchMap(currentDates =>
+        this.http.get<string[]>(`${this.apiUrl}`).pipe(
+          map(upcomingDates => {
+            const combinedDates = [...currentDates, ...upcomingDates];
+            const uniqueDates = combinedDates.filter(
+              (date, index, self) => self.indexOf(date) === index
+            );
+            return uniqueDates.map(dateStr => new Date(dateStr));
+          })
+        )
+      )
+    );
+  }
+
+
 }
