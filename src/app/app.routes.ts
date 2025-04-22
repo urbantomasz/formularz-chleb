@@ -15,8 +15,7 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     children: [
-      { path: '', redirectTo: 'chleb/formularz', pathMatch: 'full' },
-      { path: 'chleb/formularz', component: CreateOrderComponent },
+      { path: '', component: CreateOrderComponent }, 
     ],
   },
   {
@@ -27,8 +26,9 @@ export const routes: Routes = [
     ],
   },
   { path: 'auth-callback', component: AuthCallbackComponent },
-  { path: '**', redirectTo: 'chleb/formularz', pathMatch: 'full' },
+  { path: '**', redirectTo: '', pathMatch: 'full' }, // Przekierowanie na ''
 ];
+
 
 // Provide routes in your app
 export const appRouter = provideRouter(routes);

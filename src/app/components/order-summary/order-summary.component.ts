@@ -62,6 +62,14 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     }
     this.filterOrders();
   }
+
+  extractAvailableDates() {
+    this.availableDates = Array.from(
+      new Set(this.allOrders.map(order => order.orderDate.getTime()))
+    )
+      .map(timestamp => new Date(timestamp))
+      .sort((a, b) => a.getTime() - b.getTime());
+  }
  
   ngOnInit() {
     forkJoin({
@@ -73,8 +81,8 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
       next: ({ orders, breads, dates, upcomingDates }) => {
         this.upcomingDates = upcomingDates;
         this.allOrders = orders;
-        this.availableDates = dates;
         this.breadTypes = breads;
+        this.extractAvailableDates();
         this.filterOrders(); 
       },
       error: (error) => {
