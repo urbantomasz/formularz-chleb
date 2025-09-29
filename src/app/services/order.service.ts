@@ -26,6 +26,18 @@ export class OrderService {
     );
   }
 
+    getPastOrders(): Observable<OrderDto[]> {
+    return this.http.get<OrderDto[]>(`${this.apiUrl}/history`).pipe(
+      map((orders) =>
+      orders.map((order) => ({
+        ...order,
+        orderDate: new Date(order.orderDate),
+      }))
+      )
+    );
+  }
+
+
   getOrdersByDate(date: Date): Observable<OrderDto[]> {
     return this.http.get<OrderDto[]>(`${this.apiUrl}/date/${date.toDateString()}`).pipe(
       map((orders) =>

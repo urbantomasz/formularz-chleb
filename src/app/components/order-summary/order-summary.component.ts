@@ -37,6 +37,7 @@ import { DateService } from '../../services/date.service';
 })
 export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  historyOrders: OrderDto[] = [];
   allOrders: OrderDto[] = []; 
   filteredOrders: OrderDto[] = []
   dataSource = new MatTableDataSource<OrderDto>([]);
@@ -50,15 +51,24 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   private breadService = inject(BreadService);
   private deateService = inject(DateService);
   private dialog = inject(MatDialog);
-  selectedTabIndex = 0;
+  selectedTabIndex = 1;
   pastDates: Date[] = [];
   upcomingDates: Date[] = [];
+  dates: Date[] = [];
+  showHistory: boolean = false;
+
 
   onTabChange(index: number) {
-    if (index === 0) {
+    if(index === 0){
+      this.showHistory = true;
+      this.selectedDate = undefined;
+    }
+    else if (index === 1) {
+       this.showHistory = false;
       this.selectedDate = undefined;
     } else {
-      this.selectedDate = this.availableDates[index - 1];
+      this.showHistory = false;
+      this.selectedDate = this.availableDates[index - 2];
     }
     this.filterOrders();
   }
@@ -73,13 +83,16 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
  
   ngOnInit() {
     forkJoin({
+      historyOrders: this.orderService.getPastOrders(),
       orders: this.orderService.getOrders(),
       breads: this.breadService.getBreads(),
-      dates: this.deateService.getDistinctDates(),
+      dates: this.deateService.getCurrentWeekDates(),
       upcomingDates: this.deateService.getUpcomingDates(),
     }).subscribe({
-      next: ({ orders, breads, dates, upcomingDates }) => {
+      next: ({ historyOrders, orders, breads, dates, upcomingDates }) => {
         this.upcomingDates = upcomingDates;
+        this.dates = dates; 
+        this.historyOrders = historyOrders;
         this.allOrders = orders;
         this.breadTypes = breads;
         this.extractAvailableDates();
@@ -104,7 +117,10 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
 
 
   filterOrders() {
-    if (!this.selectedDate) {
+    if(this.showHistory) {
+      this.filteredOrders = [...this.historyOrders];
+    }
+    else if (!this.selectedDate) {
       this.filteredOrders = [...this.allOrders]; // Jeśli brak filtra, wyświetl wszystkie zamówienia
     } else {
       this.filteredOrders = this.allOrders.filter(order => order.orderDate.getDate() === this.selectedDate?.getDate());
@@ -180,17 +196,27 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
     });
   }
   
+   uniqueSortedDates(dates: Date[]): Date[] {
+  return Array.from(new Map(dates.map(d => [d.getTime(), d])).values())
+    .sort((a, b) => a.getTime() - b.getTime());
+}
 
   openEditDialog(order: Order) {
 
     let orderCopy = {...order};
+
+    let editDates = this.uniqueSortedDates([
+    orderCopy.orderDate!,
+    ...this.availableDates,
+    ...this.upcomingDates,
+  ]);
 
     const dialogRef = this.dialog.open(OrderEditComponent, {
       width: '600px',
       data: {
         order: orderCopy,
         breads: this.breadTypes,
-        dates: this.availableDates
+        dates: editDates
       }
     });
 
