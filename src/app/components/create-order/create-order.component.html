@@ -1,5 +1,12 @@
 <div [hidden]="orderSubmitted" class="w-full mx-auto p-6 flex flex-col items-center justify-center">
-    <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
+  
+  
+      <!-- 🔹 Informacja o zmianie terminów -->
+  <div class="w-full bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md mb-4">
+    ⚠️ Ze względu na wyjazd zamówienia będą realizowane w inne dni niż zwykle.  
+  </div>
+  
+  <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
 
     <app-order-form 
     *ngIf="order && breadTypes.length > 0 && availableDates.length > 0"

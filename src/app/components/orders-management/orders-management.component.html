@@ -1,0 +1,45 @@
+<div class="bg-white max-w-screen-xl mx-auto px-6 rounded-lg shadow-md py-6">
+
+  <mat-tab-group
+    [(selectedIndex)]="selectedIndex"
+    (selectedIndexChange)="onTabChange($event)"
+    class="border border-gray-200 mt-4"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span
+          class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
+          [ngClass]="{
+            'bg-white border border-gray-300 border-b-0 shadow-sm': selectedIndex === 0,
+            'text-gray-600 hover:bg-gray-100': selectedIndex !== 0
+          }"
+        >
+          📋 Zamówienia
+        </span>
+      </ng-template>
+
+      <ng-container *ngIf="selectedIndex === 0">
+        <app-order-summary></app-order-summary>
+      </ng-container>
+    </mat-tab>
+
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span
+          class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
+          [ngClass]="{
+            'bg-white border border-gray-300 border-b-0 shadow-sm': selectedIndex === 1,
+            'text-gray-600 hover:bg-gray-100': selectedIndex !== 1
+          }"
+        >
+          ⚙️ Konfiguracja
+        </span>
+      </ng-template>
+
+      <ng-container *ngIf="selectedIndex === 1">
+        <app-custom-config></app-custom-config>
+      </ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</div>

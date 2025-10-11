@@ -1,0 +1,59 @@
+<div class="bg-white max-w-screen-xl mx-auto p-6 rounded-lg shadow-md mt-5">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <mat-slide-toggle [(ngModel)]="datesEnabled">
+      Użyj niestandardowych dat
+    </mat-slide-toggle>
+
+    <mat-slide-toggle [(ngModel)]="bannerEnabled">
+      Wyświetlaj notyfikację
+    </mat-slide-toggle>
+  </div>
+
+  <mat-form-field class="w-full" appearance="outline">
+    <mat-label>Wiadomość (opcjonalnie)</mat-label>
+    <textarea matInput rows="3"
+              [(ngModel)]="bannerMessage"
+              placeholder="Np. Ze względu na wyjazd realizujemy zamówienia w inne dni."></textarea>
+    <mat-hint align="end">{{ bannerMessage.length || 0 }}/300</mat-hint>
+  </mat-form-field>
+
+  <div class="mt-4 flex flex-col md:flex-row md:items-end gap-3">
+    <mat-form-field appearance="outline">
+      <mat-label>Dodaj datę</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="dateToAdd">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-stroked-button color="primary" class="rounded-full"
+            (click)="addDate()">
+      ➕ Dodaj
+    </button>
+  </div>
+
+  <div class="mt-4">
+    <div class="text-sm text-gray-600 mb-2">Wybrane daty:</div>
+    <div class="flex flex-wrap gap-2">
+      @for (d of items; track $index) {
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-300 bg-gray-50 text-sm">
+          {{ d | date:'yyyy-MM-dd' }}
+          <button mat-icon-button aria-label="Usuń datę" (click)="removeDate($index)">❌</button>
+        </span>
+      }
+    </div>
+
+    @if (!items.length) {
+      <div class="text-gray-500 text-sm mt-2">
+        Brak wybranych dat.
+      </div>
+    }
+  </div>
+
+  <div class="mt-6 flex justify-end">
+    <button mat-raised-button color="primary" class="rounded-full"
+            (click)="save()" [disabled]="saving">
+      💾 Zapisz
+    </button>
+  </div>
+</div>
