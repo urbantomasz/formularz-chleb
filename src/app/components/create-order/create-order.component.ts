@@ -61,9 +61,7 @@ export class CreateOrderComponent implements OnInit {
   loadDates() {
     this.dateService.getUpcomingDates().subscribe({
       next: (data) => {
-        console.log('dates: ', data)
         this.availableDates = data;
-        console.log('dates after conversion:', this.availableDates)
         this.order.orderDate = this.availableDates[0];
       },
       error: () => alert('❌ Nie udało się pobrać listy chlebów!')

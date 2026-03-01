@@ -64,9 +64,6 @@ export class OrderFormComponent implements OnInit{
     if(this.order.items.length === 0){
       this.addBreadChoice();
     }
-    console.log(this.order);
-    console.log(this.breadTypes);
-    console.log(this.availableDates);
   }
 
   addBreadChoice() {
@@ -82,9 +79,6 @@ export class OrderFormComponent implements OnInit{
     // Dodaj nowy chleb do listy
     this.order.items = [...this.order.items, newBread];
     this.updateAvailableBreads();
-    console.log(this.order);
-    console.log(this.breadTypes);
-    console.log(this.availableDates);
   }
 
   removeBreadChoice(index: number) {

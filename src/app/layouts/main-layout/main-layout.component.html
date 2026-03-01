@@ -1,23 +1,16 @@
-<div class="bg-honeycomb">
-<div class="max-w-7xl mx-auto shadow-lg">
+
+<div class="max-w-2xl mx-auto shadow-lg">
   <div class="mx-auto bg-white shadow-lg border-b-2 border-gray-200">
     <app-header></app-header>
   </div>
 
     <div class="bg-gray-100 shadow-lg flex justify-center flex-wrap border-b-2 border-t-2 border-gray-200 sm:p-4 p-0 gap-0 sm:gap-6">
       <!-- Main content (router-outlet) -->
-      <div id="formularz" class="w-full  max-w-[625px] custom-form">
+      <div class="w-full custom-form">
         <router-outlet></router-outlet>
       </div>
-  
-      <!-- Sidebar -->
-      <div id="o-nas" class="w-full  max-w-[530px] pl-4 pb-4 bg-white custom-form">
-        <app-sidebar></app-sidebar>
-      </div>
     </div>
-  
     <div class="mx-auto shadow-lg border-t-2 border-gray-200">
     <app-footer></app-footer>
   </div>
-</div>
 </div>

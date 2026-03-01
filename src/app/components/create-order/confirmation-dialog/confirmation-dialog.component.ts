@@ -18,7 +18,6 @@ export class ConfirmationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { order: Order, breads: Bread[] }
   ) {}
   ngOnInit(): void {
-    console.log("confirmation dialog data: ", this.data);
   }
 
   confirm() {

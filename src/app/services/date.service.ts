@@ -18,8 +18,6 @@ export class DateService {
           map(response => 
             response.map(dateStr => {
 
-              console.log('przed: ', dateStr); 
-              console.log('po: ', new Date(dateStr));
               return new Date(dateStr)
             }) // ✅ Convert strings to Date objects
           )
@@ -62,6 +60,4 @@ export class DateService {
       )
     );
   }
-
-
 }
