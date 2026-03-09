@@ -1,17 +1,17 @@
-<ng-container *ngIf="order && breadTypes.length > 0 && availableDates.length > 0">
-<h2 mat-dialog-title class="bg-white text-2xl !font-bold text-center">✏️ Edytuj Zamówienie</h2>
+@if (order && breadTypes.length > 0 && availableDates.length > 0) {
+  <h2 mat-dialog-title class="bg-white text-2xl !font-bold text-center">✏️ Edytuj Zamówienie</h2>
 
-<mat-dialog-content class="bg-white p-4">
+  <mat-dialog-content class="bg-white p-4">
     <app-order-form
       [order]="order"
       [breadTypes]="breadTypes"
       [availableDates]="availableDates"
       #orderForm>
     </app-order-form>
-</mat-dialog-content>
+  </mat-dialog-content>
 
-<mat-dialog-actions class="bg-white flex justify-end p-4 space-x-4">
+  <mat-dialog-actions class="bg-white flex justify-end p-4 space-x-4">
     <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!orderForm?.isFormValid()">💾 Zapisz</button>
-  <button mat-raised-button (click)="cancel()">❌ Anuluj</button>
-</mat-dialog-actions>
-</ng-container>
+    <button mat-raised-button (click)="cancel()">❌ Anuluj</button>
+  </mat-dialog-actions>
+}

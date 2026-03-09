@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Order } from '../../models/order';
 import { Bread } from '../../models/bread';
@@ -18,20 +18,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class OrderEditComponent  {
   @ViewChild(OrderFormComponent) orderForm!: OrderFormComponent;
-  order: Order;
-  breadTypes: Bread[] = [];
-  availableDates: Date[] = [];
+  public dialogRef = inject(MatDialogRef<OrderEditComponent>);
+  public data = inject(MAT_DIALOG_DATA) as { order: Order; breads: Bread[]; dates: Date[] };
+  private orderService = inject(OrderService);
+  private snackBar = inject(MatSnackBar);
 
-  constructor(
-    private dialogRef: MatDialogRef<OrderEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { order: Order, breads: Bread[], dates: Date[] },
-    private orderService: OrderService,
-    private snackBar: MatSnackBar
-  ) {
-    this.order = data.order;
-    this.breadTypes = data.breads;
-    this.availableDates = data.dates;
-  }
+  order: Order = this.data.order;
+  breadTypes: Bread[] = this.data.breads;
+  availableDates: Date[] = this.data.dates;
 
   saveChanges() {
     if (!this.orderForm?.isFormValid()) return;

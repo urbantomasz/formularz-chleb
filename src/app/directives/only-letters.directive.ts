@@ -6,8 +6,6 @@ import { Directive, HostListener, ElementRef } from '@angular/core';
 export class OnlyLettersDirective {
   private nameRegex: RegExp = /^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ ]*$/; // Allows Polish letters & spaces
 
-  constructor(private el: ElementRef) {}
-
   @HostListener('input', ['$event'])
   onInputChange(event: Event) {
     const input = event.target as HTMLInputElement;

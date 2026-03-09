@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from '../configs/auth.config';
 import { TokenProvider } from './token-provider.service';
@@ -7,7 +7,10 @@ import { TokenProvider } from './token-provider.service';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private oauthService: OAuthService, private tokenProvider: TokenProvider) {
+  private oauthService = inject(OAuthService);
+  private tokenProvider = inject(TokenProvider);
+
+  constructor() {
     this.oauthService.configure(authConfig);
     this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
         const token = this.oauthService.getIdToken();

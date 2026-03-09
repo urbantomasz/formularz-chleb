@@ -5,13 +5,15 @@
       📋 <span>Zamówienia</span>
     </h2>
 
-    <button *ngIf="selectedDate"
-            mat-stroked-button
-            color="primary"
-            class="whitespace-nowrap shadow-md rounded-full px-4 py-2"
-            (click)="generateExcelReport(selectedDate)">
-      📆 <mat-icon class="mr-2">description</mat-icon> Pobierz raport {{ selectedDate | formatDate }}
-    </button>
+    @if (selectedDate) {
+      <button
+        mat-stroked-button
+        color="primary"
+        class="whitespace-nowrap shadow-md rounded-full px-4 py-2"
+        (click)="generateExcelReport(selectedDate)">
+        📆 <mat-icon class="mr-2">description</mat-icon> Pobierz raport {{ selectedDate | formatDate }}
+      </button>
+    }
   </div>
 
   <!-- 🔄 Tabs for date selection -->
@@ -48,30 +50,34 @@
     </ng-template>
   </mat-tab>
 
-  <mat-tab
-    *ngFor="let date of availableDates; let i = index"
-  >
-    <ng-template mat-tab-label>
-      <span
-        class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
-        [ngClass]="{
-          'bg-white border border-gray-300 border-b-0 shadow-sm': selectedTabIndex === i + 2,
-          'text-gray-600 hover:bg-gray-100': selectedTabIndex !== i + 2
-        }"
-      >
-        📅 {{ date | formatDate }}
-      </span>
-    </ng-template>
-  </mat-tab>
+  @for (date of availableDates; track date.getTime(); let i = $index) {
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span
+          class="inline-flex items-center px-3 py-1.5 rounded-t-lg font-semibold text-sm sm:px-4 sm:py-2 sm:text-base md:text-lg"
+          [ngClass]="{
+            'bg-white border border-gray-300 border-b-0 shadow-sm': selectedTabIndex === i + 2,
+            'text-gray-600 hover:bg-gray-100': selectedTabIndex !== i + 2
+          }"
+        >
+          📅 {{ date | formatDate }}
+        </span>
+      </ng-template>
+    </mat-tab>
+  }
 </mat-tab-group>
 
   <!-- 🥖 Bread summary shown only when there are orders -->
-  <div *ngIf="breadSummaryArray.length" class="hidden md:flex flex flex-wrap justify-between items-center gap-2 my-4">
-    <div *ngFor="let bread of breadSummaryArray" class="flex-1 min-w-[100px] bg-white rounded shadow p-2 text-center">
-      <h4 class="font-semibold text-xs mb-1 truncate">{{ bread.name }}</h4>
-      <span class="font-bold">{{bread.quantity}}</span>
+  @if (breadSummaryArray.length) {
+    <div class="hidden md:flex flex flex-wrap justify-between items-center gap-2 my-4">
+      @for (bread of breadSummaryArray; track bread.name) {
+        <div class="flex-1 min-w-[100px] bg-white rounded shadow p-2 text-center">
+          <h4 class="font-semibold text-xs mb-1 truncate">{{ bread.name }}</h4>
+          <span class="font-bold">{{bread.quantity}}</span>
+        </div>
+      }
     </div>
-  </div>
+  }
 
   <!-- 📋 Orders Table -->
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8 rounded-lg mt-4" matSort>
@@ -99,7 +105,9 @@
       <mat-header-cell *matHeaderCellDef> 🥖 Zamówienie </mat-header-cell>
       <mat-cell *matCellDef="let order">
         <ul class="list-disc text-left pl-5 text-xs">
-          <li *ngFor="let item of order.items"> {{ getBreadName(item.breadId) }} - {{ item.quantity }} szt.</li>
+          @for (item of order.items; track item.breadId) {
+            <li> {{ getBreadName(item.breadId) }} - {{ item.quantity }} szt.</li>
+          }
         </ul>
       </mat-cell>
     </ng-container>

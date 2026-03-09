@@ -1,26 +1,23 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderService } from '../../services/order.service';
-import { BreadService } from '../../services/bread.service';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import {MatDividerModule} from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { OnlyDigitsDirective } from '../directives/only-digits.directive';
-import { OnlyLettersDirective } from '../directives/only-letters.directive';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
 import { Bread } from '../../models/bread';
 import { Order } from '../../models/order';
-import { OrderItem } from '../../models/order-item';
-import { OrderFormComponent } from '../order-form/order-form.component';
+import { BreadService } from '../../services/bread.service';
 import { DateService } from '../../services/date.service';
+import { OrderService } from '../../services/order.service';
+import { OrderFormComponent } from '../order-form/order-form.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-create-order',

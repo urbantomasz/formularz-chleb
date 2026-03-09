@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,13 +12,9 @@ import { FormatDatePipe } from "../../../pipes/format-date.pipe";
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, FormatDatePipe],
   templateUrl: './confirmation-dialog.component.html'
 })
-export class ConfirmationDialogComponent implements OnInit {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { order: Order, breads: Bread[] }
-  ) {}
-  ngOnInit(): void {
-  }
+export class ConfirmationDialogComponent {
+  public dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
+  public data = inject(MAT_DIALOG_DATA) as { order: Order; breads: Bread[] };
 
   confirm() {
     this.dialogRef.close(true);

@@ -1,55 +1,60 @@
-<div [hidden]="orderSubmitted" class="w-full mx-auto p-6 flex flex-col items-center justify-center">
+@if (!orderSubmitted) {
+  <div class="w-full mx-auto p-6 flex flex-col items-center justify-center">
     <h2 class="text-2xl font-bold flex flex-row justify-center items-center">📋 Formularz Zamówienia</h2>
 
-    <app-order-form 
-    *ngIf="order && breadTypes.length > 0 && availableDates.length > 0"
-    class="w-full"
-    [availableDates]="availableDates"
-    [breadTypes]="breadTypes"
-    [order]="order">
-  </app-order-form>
+    @if (order && breadTypes.length > 0 && availableDates.length > 0) {
+      <app-order-form
+        class="w-full"
+        [availableDates]="availableDates"
+        [breadTypes]="breadTypes"
+        [order]="order">
+      </app-order-form>
+    }
 
-
-    <button  [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" type="button"
-    class="w-full py-2 rounded-md mt-3 text-white font-bold transition
-    bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
-    ✅ Złóż zamówienie
+    <button [disabled]="!isFormValid()" (click)="this.openConfirmationDialog()" type="button"
+      class="w-full py-2 rounded-md mt-3 text-white font-bold transition
+      bg-gray-400 cursor-not-allowed enabled:bg-blue-500 enabled:hover:bg-blue-600 enabled:cursor-pointer">
+      ✅ Złóż zamówienie
     </button>
-</div>      
+  </div>
+}
 
   
 <!-- 🔹 Success/Error Messages -->
-<div *ngIf="orderSubmitted" 
-     class="max-w-xl mx-auto p-6 rounded-lg shadow-md m-5 text-center"
-     [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
-  
-  <h2 class="text-2xl font-bold"
+@if (orderSubmitted) {
+  <div class="max-w-xl mx-auto p-6 rounded-lg shadow-md m-5 text-center"
+    [ngClass]="submissionSuccess ? 'bg-green-100' : 'bg-red-100'">
+
+    <h2 class="text-2xl font-bold"
       [ngClass]="submissionSuccess ? 'text-green-600' : 'text-red-600'">
-    {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
-  </h2>
+      {{ submissionSuccess ? '✅ Zamówienie zostało pomyślnie złożone!' : '❌ Wystąpił problem!' }}
+    </h2>
 
-  <p class="mt-3 text-gray-700">
-    <ng-container *ngIf="submissionSuccess; else errorText">
-      Dziękujemy za Twoje zamówienie.
-    </ng-container>
-    <ng-template #errorText>
-      Przepraszamy za kłopoty, nie udało się potwierdzić zamówienia.<br>
-      Prosimy o kontakt telefoniczny w celu jego złożenia.
-    </ng-template>
-  </p>
-  <!-- 🔹 Display contact info if submission failed -->
-  <div *ngIf="!submissionSuccess" class="mt-2 font-bold">
-    📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
+    <p class="mt-3 text-gray-700">
+      @if (submissionSuccess) {
+        Dziękujemy za Twoje zamówienie.
+      } @else {
+        Przepraszamy za kłopoty, nie udało się potwierdzić zamówienia.<br>
+        Prosimy o kontakt telefoniczny w celu jego złożenia.
+      }
+    </p>
+    <!-- 🔹 Display contact info if submission failed -->
+    @if (!submissionSuccess) {
+      <div class="mt-2 font-bold">
+        📞 <a href="tel:+48511762964" class="text-blue-600 hover:underline">+48 511 762 964</a>
+      </div>
+    }
+
+    <button (click)="reloadView()" type="button"
+      class="cursor-pointer mt-4 px-6 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 transition font-bold">
+      🔄 Zamów ponownie
+    </button>
   </div>
-
-  <button (click)="reloadView()" type="button"
-  class="mt-4 px-6 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 transition font-bold">
-🔄 Zamów ponownie
-</button>
-
-</div>
+}
 
   <!-- 🔹 Full Page Loading Spinner -->
-<div *ngIf="isSubmitting" class="fixed inset-0  bg-gray-200/50 flex items-center justify-center z-50">
+@if (isSubmitting) {
+  <div class="fixed inset-0  bg-gray-200/50 flex items-center justify-center z-50">
     <mat-progress-spinner mode="indeterminate" diameter="64" color="accent"></mat-progress-spinner>
   </div>
+}

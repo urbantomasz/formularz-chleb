@@ -1,17 +1,14 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderService } from '../../services/order.service';
-import { BreadService } from '../../services/bread.service';
-import { Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { Bread } from '../../models/bread';
 import { Order } from '../../models/order';
 import { OrderItem } from '../../models/order-item';
@@ -46,7 +43,7 @@ export class OrderFormComponent implements OnInit{
     }));
   }
 
-  trackById(index: number, obj: any): any {
+  trackById(index: number): number {
     return index;
   }
 

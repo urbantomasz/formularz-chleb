@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
 import { provideRouter } from '@angular/router';
-
-// Import your components
-import { OrderFormComponent } from './components/order-form/order-form.component';
 import { OrderSummaryComponent } from './components/order-summary/order-summary.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
@@ -28,7 +25,6 @@ export const routes: Routes = [
   { path: 'auth-callback', component: AuthCallbackComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }, // Przekierowanie na ''
 ];
-
 
 // Provide routes in your app
 export const appRouter = provideRouter(routes);

@@ -22,9 +22,11 @@
     </h3>
   
     <ul class="text-left mt-2 space-y-1">
-      <li *ngFor="let bread of data.order.items" class="flex items-center">
-        🍞 <span class="ml-2">{{ getBreadName(bread.breadId) }} - <strong>{{ bread.quantity }} szt.</strong></span>
-      </li>
+      @for (bread of data.order.items; track bread.breadId) {
+        <li class="flex items-center">
+          🍞 <span class="ml-2">{{ getBreadName(bread.breadId) }} - <strong>{{ bread.quantity }} szt.</strong></span>
+        </li>
+      }
     </ul>
   </mat-dialog-content>
   <br>

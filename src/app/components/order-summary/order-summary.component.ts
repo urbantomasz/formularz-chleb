@@ -1,28 +1,26 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { OrderService } from '../../services/order.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ConfirmDialog } from './confirm-dialog.component';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormatDatePipe } from "../../pipes/format-date.pipe";
-import { OrderDto } from '../../models/order-dto';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { Order } from '../../models/order';
-import { OrderEditComponent } from '../order-edit/order-edit.component';
-import { BreadService } from '../../services/bread.service';
-import { Bread } from '../../models/bread';
-import { FormatDateTimePipe } from "../../pipes/format-datetime.pipe";
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { forkJoin } from 'rxjs';
-import {MatTabsModule} from '@angular/material/tabs';
+import { Bread } from '../../models/bread';
+import { Order } from '../../models/order';
+import { OrderDto } from '../../models/order-dto';
+import { FormatDatePipe } from "../../pipes/format-date.pipe";
+import { FormatDateTimePipe } from "../../pipes/format-datetime.pipe";
+import { BreadService } from '../../services/bread.service';
 import { DateService } from '../../services/date.service';
+import { OrderService } from '../../services/order.service';
+import { OrderEditComponent } from '../order-edit/order-edit.component';
+import { ConfirmDialog } from './confirm-dialog.component';
 
 @Component({
   selector: 'app-order-summary',
@@ -55,7 +53,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   pastDates: Date[] = [];
   upcomingDates: Date[] = [];
   dates: Date[] = [];
-  showHistory: boolean = false;
+  showHistory = false;
 
 
   onTabChange(index: number) {
@@ -130,7 +128,7 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
   }
 
   updateBreadSummary() {
-    const summaryMap: { [key: number]: number } = {};
+    const summaryMap: Record<number, number> = {};
   
     for (const order of this.filteredOrders) {
       for (const item of order.items) {
@@ -203,9 +201,9 @@ export class OrderSummaryComponent implements OnInit, AfterViewInit  {
 
   openEditDialog(order: Order) {
 
-    let orderCopy = {...order};
+    const orderCopy = { ...order };
 
-    let editDates = this.uniqueSortedDates([
+    const editDates = this.uniqueSortedDates([
     orderCopy.orderDate!,
     ...this.availableDates,
     ...this.upcomingDates,

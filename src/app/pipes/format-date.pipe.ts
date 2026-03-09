@@ -6,8 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FormatDatePipe implements PipeTransform {
   transform(value: Date | string, 
-            locale: string = 'pl-PL', 
-            timeZone: string = 'Europe/Warsaw',  // Defaulting to Warsaw, Poland time zone
+            locale = 'pl-PL', 
+            timeZone = 'Europe/Warsaw',  // Defaulting to Warsaw, Poland time zone
             formatOptions: Intl.DateTimeFormatOptions = {
                 weekday: 'long',
                 day: '2-digit',

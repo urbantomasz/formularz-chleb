@@ -5,9 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class FormatDateTimePipe implements PipeTransform {
+  
   transform(value: Date | string, 
-            locale: string = 'pl-PL', 
-            timeZone: string = 'Europe/Warsaw',  // Defaulting to Warsaw, Poland time zone
+            locale  = 'pl-PL', 
+            timeZone = 'Europe/Warsaw',  // Defaulting to Warsaw, Poland time zone
             formatOptions: Intl.DateTimeFormatOptions = {
                 day: '2-digit',
                 month: '2-digit',
@@ -15,6 +16,7 @@ export class FormatDateTimePipe implements PipeTransform {
                 hour: '2-digit',
                 minute: '2-digit',
             }): string {
+
     if (!value) return '';
 
     const date = typeof value === 'string' ? new Date(value) : value;

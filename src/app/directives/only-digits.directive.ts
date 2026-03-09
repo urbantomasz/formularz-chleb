@@ -1,11 +1,10 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, ElementRef, inject } from '@angular/core';
 
 @Directive({
-  selector: '[onlyDigits]'
+  selector: '[appOnlyDigits]'
 })
 export class OnlyDigitsDirective {
-  constructor(private el: ElementRef) {}
-
+  
   @HostListener('input', ['$event'])
   onInputChange(event: Event) {
     const input = event.target as HTMLInputElement;

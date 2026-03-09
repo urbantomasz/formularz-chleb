@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -8,8 +8,9 @@ import { OAuthService } from 'angular-oauth2-oidc';
 })
 export class AuthGuard implements CanActivate {
   private allowedEmails = ['urbantomasz94@gmail.com', 'mojepszczolymk@gmail.com'];
-
-  constructor(private authService: AuthService, private oauthService: OAuthService, private router: Router) {}
+  private authService = inject(AuthService);
+  private oauthService = inject(OAuthService);
+  private router = inject(Router);
 
   async canActivate(): Promise<boolean> {
  // Ensure user is authenticated
@@ -19,8 +20,8 @@ export class AuthGuard implements CanActivate {
     }
 
   // Get user profile from OAuth service
-    const claims = this.oauthService.getIdentityClaims();
-    const userEmail = claims ? (claims as any).email : null;
+    const claims = this.oauthService.getIdentityClaims() as Record<string, unknown> | null;
+    const userEmail = claims && typeof claims['email'] === 'string' ? (claims['email'] as string) : null;
 
     // Check if user is in the allowed list
     if (!userEmail || !this.allowedEmails.includes(userEmail)) {
